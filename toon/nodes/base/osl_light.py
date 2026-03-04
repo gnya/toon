@@ -1,124 +1,81 @@
 from __future__ import annotations
 
-import re
 from typing import TYPE_CHECKING
 
 import bpy
-from bpy.props import PointerProperty, StringProperty
+from bpy.props import PointerProperty
 from bpy.types import Object
 
-from toon.utils import NodeLinkRebinder, object_rename_post, override
+from toon.utils import NodeLinkRebinder, override
 
 from .osl import ToonNodeOSL
 
 if TYPE_CHECKING:
-    from bpy.types import Context, Node, NodeTree, UILayout
+    from bpy.types import Context, Node, NodeSocket, NodeTree, UILayout
 
 
 class ToonNodeOSLLight(ToonNodeOSL):
-    def _poll_object(self, object: Object) -> bool:
-        if object.library is not None:
-            return False
+    DRIVER_VARIABLE_NAME = "_ToonNodeOSLLight"
 
-        return object.type in {"LIGHT", "EMPTY"}
+    def _poll_object(self, obj: Object) -> bool:
+        return obj.type in {"LIGHT", "EMPTY"}
 
     def _update_object(self, context: Context):
         with NodeLinkRebinder(self):
             self.free()
             self.init(context)
 
-        if self.object is None:
-            self.last_object_name = ""
-        else:
-            self.last_object_name = self.object.name
-
-    last_object_name: StringProperty(default="")
-
     object: PointerProperty(
         name="Object", type=Object, poll=_poll_object, update=_update_object
     )
 
-    def _attr_prefix(self):
-        if self.object is None:
-            return ""
-
-        return f'objects["{self.object.name}"]'
-
     def _get_node_tree(self, name: str) -> NodeTree | None:
-        prefix = self._attr_prefix()
-
         for node_tree in bpy.data.node_groups:
             if not node_tree.name.startswith(name):
                 continue
 
-            for node in node_tree.nodes:
-                if node.bl_idname != "ShaderNodeAttribute":
-                    continue
+            anim = node_tree.animation_data
 
-                attr = node.attribute_name
+            if anim is None:
+                continue
 
-                if not prefix:
-                    if not attr:
-                        return node_tree
-                    else:
+            for fcurve in anim.drivers:
+                for variable in fcurve.driver.variables:
+                    if variable.name != self.DRIVER_VARIABLE_NAME:
                         continue
-                elif attr.startswith(prefix):
-                    return node_tree
+
+                    for target in variable.targets:
+                        if target.id == self.object:
+                            return node_tree
 
         return None
 
-    def _update_attr_nodes(self, obj: Object):
-        if not obj or obj != self.object:
-            return
-        elif obj.name == self.last_object_name:
-            return
+    def _add_driver_to_socket(self, socket: NodeSocket, transform_type: str):
+        driver = socket.driver_add("default_value").driver
+        variable = driver.variables.new()
+        variable.name = self.DRIVER_VARIABLE_NAME
+        variable.type = "TRANSFORMS"
+        target = variable.targets[0]
+        target.id = self.object
+        target.transform_type = transform_type
+        target.transform_space = "WORLD_SPACE"
+        driver.expression = self.DRIVER_VARIABLE_NAME
 
-        node_tree = self.node_tree
+    def new_location_node(self, node_tree: NodeTree) -> Node:
+        node = node_tree.nodes.new("ShaderNodeCombineXYZ")
 
-        if node_tree is None:
-            return
+        self._add_driver_to_socket(node.inputs[0], "LOC_X")
+        self._add_driver_to_socket(node.inputs[1], "LOC_Y")
+        self._add_driver_to_socket(node.inputs[2], "LOC_Z")
 
-        for node in node_tree.nodes:
-            if node.bl_idname != "ShaderNodeAttribute":
-                continue
+        return node
 
-            prefix = self._attr_prefix()
-            attr_old = node.attribute_name
-            attr_new = re.sub(r'^objects\[".*"\]', prefix, attr_old)
-            node.attribute_name = attr_new
+    def new_rotation_node(self, node_tree: NodeTree) -> Node:
+        node = node_tree.nodes.new("ShaderNodeCombineXYZ")
 
-        self.last_object_name = obj.name
-
-    @staticmethod
-    def _update_all_attr_nodes(obj: Object, last_name: str):
-        for material in bpy.data.materials:
-            if material.node_tree is None:
-                continue
-
-            for node in material.node_tree.nodes:
-                if not isinstance(node, ToonNodeOSLLight):
-                    continue
-
-                node._update_attr_nodes(obj)
-
-        for node_tree in bpy.data.node_groups:
-            if node_tree.name[0] == ".":
-                continue
-
-            for node in node_tree.nodes:
-                if not isinstance(node, ToonNodeOSLLight):
-                    continue
-
-                node._update_attr_nodes(obj)
-
-    def new_attr_node(self, node_tree: NodeTree, attr: str) -> Node:
-        prefix = self._attr_prefix()
-        attribute_name = f"{prefix}.{attr}" if prefix else ""
-
-        node = node_tree.nodes.new("ShaderNodeAttribute")
-        node.name = "Attribute Rotation"
-        node.attribute_type = "VIEW_LAYER"
-        node.attribute_name = attribute_name
+        self._add_driver_to_socket(node.inputs[0], "ROT_X")
+        self._add_driver_to_socket(node.inputs[1], "ROT_Y")
+        self._add_driver_to_socket(node.inputs[2], "ROT_Z")
 
         return node
 
@@ -126,12 +83,9 @@ class ToonNodeOSLLight(ToonNodeOSL):
     def get_node_tree(self) -> tuple[NodeTree | None, bool]:
         name, _ = self.node_tree_key()
 
-        if not name:
+        if name == "":
             return None, False
-
-        node_tree = self._get_node_tree(name)
-
-        if node_tree is None:
+        elif (node_tree := self._get_node_tree(name)) is None:
             return self.new_node_tree(name)
         else:
             return node_tree, True
@@ -141,8 +95,3 @@ class ToonNodeOSLLight(ToonNodeOSL):
         super().draw_buttons(context, layout)
 
         layout.prop(self, "object", text="Object")
-
-    @classmethod
-    def register(cls):
-        if cls._update_all_attr_nodes not in object_rename_post:
-            object_rename_post.append(cls._update_all_attr_nodes)
