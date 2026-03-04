@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterator
 
+from toon.utils import NodeLinkRebinder, all_node_users_itr
+
 from .bridge import get_facade
 
 if TYPE_CHECKING:
@@ -40,7 +42,12 @@ def merge_group(
         if dst_color is None:
             dst_color = dst.add(src_color.name)
 
-        merge_color(src_color, dst_color)
+        if not merge_color(src_color, dst_color):
+            return False
+
+    for node in all_node_users_itr(src.node_tree):
+        with NodeLinkRebinder(node):
+            node.node_tree = dst.node_tree
 
     return True
 
@@ -58,7 +65,12 @@ def merge_palette(src: ToonPalette, dst: ToonPalette, overwrite: bool = False) -
         if dst_group is None:
             dst_group = dst.add(src_group.name)
 
-        merge_group(src_group, dst_group, overwrite)
+        if not merge_group(src_group, dst_group, overwrite):
+            return False
+
+    for node in all_node_users_itr(src.header):
+        with NodeLinkRebinder(node):
+            node.node_tree = dst.header
 
     return True
 
