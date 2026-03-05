@@ -43,11 +43,11 @@ class ToonNodeLightArea(ToonNodeOSLLight):
 
     @override
     def init_node_tree(self, node_tree: NodeTree, script: Node):
-        location = self.new_attr_node(node_tree, "location")
-        rotation = self.new_attr_node(node_tree, "rotation_euler")
+        location = self.new_location_node(node_tree)
+        rotation = self.new_rotation_node(node_tree)
         input = node_tree.nodes.new("NodeGroupInput")
-        node_tree.links.new(location.outputs[1], script.inputs[0])
-        node_tree.links.new(rotation.outputs[1], script.inputs[1])
+        node_tree.links.new(location.outputs[0], script.inputs[0])
+        node_tree.links.new(rotation.outputs[0], script.inputs[1])
         node_tree.links.new(input.outputs[0], script.inputs[2])
         node_tree.links.new(input.outputs[1], script.inputs[3])
         node_tree.links.new(input.outputs[2], script.inputs[4])

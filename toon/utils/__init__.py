@@ -1,4 +1,4 @@
-from .handlers import node_group_import_post, node_group_update_post, object_rename_post
+from .handlers import node_group_import_post, node_group_update_post
 from .lock import list_pids, register_pid, unregister_pid
 from .naming import unique_name
 from .node import (
@@ -31,7 +31,6 @@ __all__ = [
     unique_name,
     timeit,
     time_start,
-    object_rename_post,
     node_group_update_post,
     node_group_import_post,
     NodeLinkRebinder,

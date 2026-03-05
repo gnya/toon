@@ -1,10 +1,9 @@
 bl_info = {
     "name": "Toon",
     "author": "gnya",
-    "version": (0, 2, 0),
+    "version": (0, 2, 1),
     "blender": (3, 6, 0),
-    "description": "Add shader script wrappers and other features "
-    "to make the toon shader easier to use. (For my personal project.)",
+    "description": "Pre-2.79 style render nodes with a shared color palette system.",
     "category": "Material",
 }
 

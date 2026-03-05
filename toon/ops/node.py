@@ -42,6 +42,14 @@ class NODE_OT_toon_node_compile_all(Operator):
 
         register_shaders()
 
+        # Toggle viewport shading to refresh the results.
+        for area in context.screen.areas:
+            if area.type == "VIEW_3D":
+                for space in area.spaces:
+                    if space.type == "VIEW_3D" and space.shading.type == "RENDERED":
+                        space.shading.type = "SOLID"
+                        space.shading.type = "RENDERED"
+
         self.report({"INFO"}, "Successfully compiled OSL scripts.")
 
         return {"FINISHED"}
