@@ -9,7 +9,7 @@ from toon.ops import (
     NODE_OT_toon_node_reload_all,
     NODE_OT_toon_node_setup_osl_render,
 )
-from toon.props import ToonNodeSettings
+from toon.props import ToonNodeMaterialSettings, ToonNodeObjectSettings
 from toon.utils import override
 
 if TYPE_CHECKING:
@@ -40,13 +40,14 @@ class OBJECT_PT_toon_node(Panel):
         if context.object is None:
             return
 
-        settings = ToonNodeSettings.instance(context.object)
+        settings = ToonNodeObjectSettings.instance(context.object)
 
         col = layout.column()
         col.use_property_split = True
         col.prop(settings, "cast_shadows", text="Cast Shadows")
         col.prop(settings, "shadow_id", text="Shadow ID")
         col.prop(settings, "transparent_id", text="Transparent ID")
+        col.prop(settings, "shadow_terminator_geometry_offset", text="Geometry Offset")
 
     @staticmethod
     def register():
@@ -75,22 +76,22 @@ class MATERIAL_PT_toon_node(Panel):
         if context.object is None or context.material is None:
             return
 
-        object_settings = ToonNodeSettings.instance(context.object)
-        settings = ToonNodeSettings.instance(context.material)
+        object_settings = ToonNodeObjectSettings.instance(context.object)
+        material_settings = ToonNodeMaterialSettings.instance(context.material)
 
         col = layout.column()
         col.use_property_split = True
 
         row = col.row()
-        row.prop(settings, "cast_shadows", text="Cast Shadows")
+        row.prop(material_settings, "cast_shadows", text="Cast Shadows")
         row.active = int(object_settings.cast_shadows) == 0
 
         row = col.row()
-        row.prop(settings, "shadow_id", text="Shadow ID")
+        row.prop(material_settings, "shadow_id", text="Shadow ID")
         row.active = object_settings.shadow_id == 0
 
         row = col.row()
-        row.prop(settings, "transparent_id", text="Transparent ID")
+        row.prop(material_settings, "transparent_id", text="Transparent ID")
         row.active = object_settings.transparent_id == 0
 
     @staticmethod

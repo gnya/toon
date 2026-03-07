@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from bpy.props import EnumProperty, IntProperty, PointerProperty
+from bpy.props import EnumProperty, FloatProperty, IntProperty, PointerProperty
 from bpy.types import Material, Object, PropertyGroup
 
 
@@ -57,20 +57,42 @@ class ToonNodeSettings(PropertyGroup):
         get=_get_transparent_id,
     )
 
+
+class ToonNodeMaterialSettings(ToonNodeSettings):
     @staticmethod
-    def instance(id: Material | Object) -> ToonNodeSettings:
+    def instance(id: Material) -> ToonNodeMaterialSettings:
         return getattr(id, ToonNodeSettings.PROP_NAME)
 
     @staticmethod
     def register():
         setattr(
-            Material, ToonNodeSettings.PROP_NAME, PointerProperty(type=ToonNodeSettings)
-        )
-        setattr(
-            Object, ToonNodeSettings.PROP_NAME, PointerProperty(type=ToonNodeSettings)
+            Material,
+            ToonNodeSettings.PROP_NAME,
+            PointerProperty(type=ToonNodeMaterialSettings),
         )
 
     @staticmethod
     def unregister():
         delattr(Material, ToonNodeSettings.PROP_NAME)
+
+
+class ToonNodeObjectSettings(ToonNodeSettings):
+    shadow_terminator_geometry_offset: FloatProperty(
+        name="Geometry Offset", default=0.1, min=0.0, max=1.0
+    )
+
+    @staticmethod
+    def instance(id: Object) -> ToonNodeObjectSettings:
+        return getattr(id, ToonNodeSettings.PROP_NAME)
+
+    @staticmethod
+    def register():
+        setattr(
+            Object,
+            ToonNodeSettings.PROP_NAME,
+            PointerProperty(type=ToonNodeObjectSettings),
+        )
+
+    @staticmethod
+    def unregister():
         delattr(Object, ToonNodeSettings.PROP_NAME)
