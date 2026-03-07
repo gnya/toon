@@ -1,5 +1,6 @@
 from .area_light import ToonNodeLightArea
 from .hsv_jitter import ToonNodeHSVJitter
+from .input import ToonNodeInput
 from .lambert import ToonNodeLambert
 from .matcap import ToonNodeMatCap
 from .material import ToonNodeMaterial
@@ -17,6 +18,7 @@ classes = (
     ToonNodeVisualize,
     ToonNodeHSVJitter,
     ToonNodeUVPixelSnap,
+    ToonNodeInput,
     ToonNodeLambert,
     ToonNodeMaterial,
     ToonNodeLightArea,

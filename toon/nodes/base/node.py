@@ -55,6 +55,11 @@ class ToonNode(ShaderNodeCustomGroup):
         self.node_tree, self.node_ready = None, False
 
         if node_tree is not None and node_tree.users == 0:
+            # `NodeTree.free()` is not triggered on deletion; call it explicitly.
+            for node in node_tree.nodes:
+                if hasattr(node, "free"):
+                    node.free()
+
             bpy.data.node_groups.remove(node_tree)
 
     @override

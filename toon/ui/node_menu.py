@@ -6,13 +6,9 @@ from bpy.types import Menu, Node
 
 from toon.nodes import (
     ToonNodeHSVJitter,
+    ToonNodeInput,
     ToonNodeLambert,
-    ToonNodeLightArea,
-    ToonNodeLightPoint,
-    ToonNodeLightSpot,
-    ToonNodeLightSun,
     ToonNodeMatCap,
-    ToonNodeMaterial,
     ToonNodeOutput,
     ToonNodePalette,
     ToonNodeUVPixelSnap,
@@ -61,14 +57,10 @@ class NODE_MT_toon_node_category(Menu):
         self._draw_node(col, ToonNodeHSVJitter)
         self._draw_node(col, ToonNodeUVPixelSnap)
         col.separator()
-        self._draw_node(col, ToonNodeLightArea)
-        self._draw_node(col, ToonNodeLightPoint)
-        self._draw_node(col, ToonNodeLightSpot)
-        self._draw_node(col, ToonNodeLightSun)
+        self._draw_node(col, ToonNodeInput)
         col.separator()
         self._draw_node(col, ToonNodeVisualize)
         self._draw_node(col, ToonNodeLambert)
-        self._draw_node(col, ToonNodeMaterial)
         col.separator()
         self._draw_node(col, ToonNodeOutput)
 
