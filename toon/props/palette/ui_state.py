@@ -169,14 +169,24 @@ class ToonPaletteUIState(PropertyGroup):
             PointerProperty(type=ToonPaletteUIState),
         )
 
-        redo_post.append(ToonPaletteUIState._sync_state)
-        undo_post.append(ToonPaletteUIState._sync_state)
-        node_group_import_post.append(ToonPaletteUIState._sync_state)
+        if ToonPaletteUIState._sync_state not in redo_post:
+            redo_post.append(ToonPaletteUIState._sync_state)
+
+        if ToonPaletteUIState._sync_state not in undo_post:
+            undo_post.append(ToonPaletteUIState._sync_state)
+
+        if ToonPaletteUIState._sync_state not in node_group_import_post:
+            node_group_import_post.append(ToonPaletteUIState._sync_state)
 
     @staticmethod
     def unregister():
         delattr(WindowManager, ToonPaletteUIState.PROP_NAME)
 
-        redo_post.remove(ToonPaletteUIState._sync_state)
-        undo_post.remove(ToonPaletteUIState._sync_state)
-        node_group_import_post.remove(ToonPaletteUIState._sync_state)
+        if ToonPaletteUIState._sync_state in redo_post:
+            redo_post.remove(ToonPaletteUIState._sync_state)
+
+        if ToonPaletteUIState._sync_state in undo_post:
+            undo_post.remove(ToonPaletteUIState._sync_state)
+
+        if ToonPaletteUIState._sync_state in node_group_import_post:
+            node_group_import_post.remove(ToonPaletteUIState._sync_state)
