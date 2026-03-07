@@ -24,7 +24,7 @@ class ToonNodeLightSun(ToonNodeOSLLight):
     @override
     def init_node_tree(self, node_tree: NodeTree, script: Node):
         rotation = self.new_rotation_node(node_tree)
-        energy = self.new_property_node(node_tree, "data.energy")
+        energy = self.new_property_node(node_tree, "energy")
         node_tree.links.new(rotation.outputs[0], script.inputs[0])
         node_tree.links.new(energy.outputs[0], script.inputs[1])
 

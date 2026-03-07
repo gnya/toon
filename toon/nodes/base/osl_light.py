@@ -6,6 +6,7 @@ import bpy
 from bpy.props import PointerProperty
 from bpy.types import Object
 
+from toon.props import ToonNodeLightSettings
 from toon.utils import NodeLinkRebinder, override
 
 from .osl import ToonNodeOSL
@@ -18,7 +19,7 @@ class ToonNodeOSLLight(ToonNodeOSL):
     DRIVER_VARIABLE_NAME = "_ToonNodeOSLLight"
 
     def _poll_object(self, obj: Object) -> bool:
-        return obj.type in {"LIGHT", "EMPTY"}
+        return obj.type in {"LIGHT"}
 
     def _update_object(self, context: Context):
         with NodeLinkRebinder(self):
@@ -68,7 +69,7 @@ class ToonNodeOSLLight(ToonNodeOSL):
         variable.type = "SINGLE_PROP"
         target = variable.targets[0]
         target.id = self.object
-        target.data_path = data_path
+        target.data_path = f"data.{ToonNodeLightSettings.PROP_NAME}.{data_path}"
         driver.expression = self.DRIVER_VARIABLE_NAME
 
     def new_location_node(self, node_tree: NodeTree) -> Node:

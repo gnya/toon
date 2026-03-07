@@ -1,4 +1,8 @@
-from .node import ToonNodeMaterialSettings, ToonNodeObjectSettings
+from .node import (
+    ToonNodeLightSettings,
+    ToonNodeMaterialSettings,
+    ToonNodeObjectSettings,
+)
 from .palette import (
     ToonPaletteProperty,
     ToonPaletteSearchGroup,
@@ -10,21 +14,8 @@ from .palette import (
     ToonPaletteViewSettings,
 )
 
-__all__ = [
-    ToonNodeMaterialSettings,
-    ToonNodeObjectSettings,
-    ToonPaletteProperty,
-    ToonPaletteSearchGroup,
-    ToonPaletteSearchPalette,
-    ToonPaletteSearchIndex,
-    ToonPaletteViewSettings,
-    ToonPaletteUIItem,
-    ToonPaletteUIPaletteState,
-    ToonPaletteUIState,
-]
-
-
 classes = (
+    ToonNodeLightSettings,
     ToonNodeMaterialSettings,
     ToonNodeObjectSettings,
     ToonPaletteProperty,
