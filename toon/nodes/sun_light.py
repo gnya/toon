@@ -17,11 +17,6 @@ class ToonNodeLightSun(ToonNodeOSLLight):
 
     @override
     def init_sockets(self, node_tree: NodeTree):
-        i = node_tree.inputs.new("NodeSocketFloat", "Energy")
-        i.default_value = 1.0
-        i.min_value = 0.0
-        i.max_value = float("inf")
-
         node_tree.outputs.new("NodeSocketVector", "Light")
         node_tree.outputs.new("NodeSocketFloat", "Ray Length")
         node_tree.outputs.new("NodeSocketVector", "UV")
@@ -29,9 +24,9 @@ class ToonNodeLightSun(ToonNodeOSLLight):
     @override
     def init_node_tree(self, node_tree: NodeTree, script: Node):
         rotation = self.new_rotation_node(node_tree)
-        input = node_tree.nodes.new("NodeGroupInput")
+        energy = self.new_property_node(node_tree, "data.energy")
         node_tree.links.new(rotation.outputs[0], script.inputs[0])
-        node_tree.links.new(input.outputs[0], script.inputs[1])
+        node_tree.links.new(energy.outputs[0], script.inputs[1])
 
         output = node_tree.nodes.new("NodeGroupOutput")
         node_tree.links.new(script.outputs[0], output.inputs[0])
