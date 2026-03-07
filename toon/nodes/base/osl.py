@@ -3,7 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import bpy
+from bpy.types import Context, UILayout
 
+from toon.ops import NODE_OT_toon_node_reload_all, NODE_OT_toon_node_setup_osl_render
 from toon.shaders import shader_filepath
 from toon.utils import override
 
@@ -56,3 +58,22 @@ class ToonNodeOSL(ToonNode):
 
         if not self._try_load_osl(script):
             self.node_ready = False
+
+    @override
+    def draw_buttons(self, context: Context, layout: UILayout):
+        if not self.node_ready:
+            if not (
+                context.scene.render.engine == "CYCLES"
+                and context.scene.cycles.shading_system
+            ):
+                layout.operator(
+                    NODE_OT_toon_node_setup_osl_render.bl_idname,
+                    text="Setup Render",
+                    icon="PREFERENCES",
+                )
+            else:
+                layout.operator(
+                    NODE_OT_toon_node_reload_all.bl_idname,
+                    text="Reload",
+                    icon="FILE_REFRESH",
+                )
