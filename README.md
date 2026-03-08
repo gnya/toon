@@ -1,2 +1,2 @@
 ### toon
-This addon introduces nodes to recreate the classic Blender Internal (pre-2.79) look, along with a palette system for managing shared color presets and dedicated nodes for sampling them.
+このアドオンは、2.79 以前の Blender Internal の見た目を再現するためのノードと、パレットシステム、およびそれらから色を取得するためのノードを提供します。
