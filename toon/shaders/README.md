@@ -1,5 +1,5 @@
 ## これはなに？
-[Open Shader Language](https://docs.blender.org/manual/en/latest/render/shader_nodes/osl.html) (OSL) で記述された個人プロジェクト用のシェーダースクリプトです<br>
+[Open Shader Language](https://docs.blender.org/manual/en/latest/render/shader_nodes/osl.html) (OSL) で記述されたシェーダースクリプトです<br>
 
 > [!NOTE]
 > Blender 3.6.0 の Cycles でスクリプトノードから読み込んで使用することを想定しています
@@ -38,6 +38,10 @@
 
   レンダリングポイントにおけるライトベクトル
 
+* RayLength
+
+  レンダリングポイントから光源までの距離
+
 * UV
 
   レンダリングポイントにおけるライトテクスチャのUV座標
@@ -58,6 +62,10 @@
 
   レンダリングポイントにおけるライトベクトル
 
+* RayLength
+
+  レンダリングポイントから光源までの距離
+
 * UV
 
   レンダリングポイントにおけるライトテクスチャのUV座標（常にゼロベクトルを返します）
@@ -68,6 +76,10 @@
 * Location
 
   ライトオブジェクトの位置（ワールド座標系）
+
+* Rotation
+
+  ライトオブジェクトのオイラーXYZ回転角（ワールド座標系）
 
 * Energy
 
@@ -81,6 +93,10 @@
 * Light
 
   レンダリングポイントにおけるライトベクトル
+
+* RayLength
+
+  レンダリングポイントから光源までの距離
 
 * UV
 
@@ -110,6 +126,10 @@
 
   レンダリングポイントにおけるライトベクトル
 
+* RayLength
+
+  レンダリングポイントから光源までの距離
+
 * UV
 
   レンダリングポイントにおけるライトテクスチャのUV座標
@@ -120,6 +140,14 @@
 * Light
 
   レンダリングポイントにおけるライトベクトル
+
+* RayLength
+
+  レンダリングポイントから光源までの距離
+
+* Normal
+
+  レンダリングポイントからの法線
 
 * Cutoff
 
@@ -170,6 +198,10 @@
   透明度
 
 #### Outputs
+* IsCycles
+
+  CyclesとOSLが有効か？
+
 * Shader
 
   シェーダー
