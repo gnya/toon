@@ -7,12 +7,12 @@ from bpy.props import PointerProperty
 from bpy.types import Object
 
 from toon.ops import NODE_OT_toon_node_reload_all, NODE_OT_toon_node_setup_osl_render
-from toon.utils import NodeLinkRebinder, override
+from toon.utils import NodeLinkRebinder, all_node_itr, light_type_update_post, override
 
 from .base import ToonNode
 
 if TYPE_CHECKING:
-    from bpy.types import Context, NodeTree, UILayout
+    from bpy.types import Context, Light, NodeTree, UILayout
 
 
 class ToonNodeInput(ToonNode):
@@ -128,3 +128,20 @@ class ToonNodeInput(ToonNode):
                 )
 
         layout.prop(self, "object", text="Object")
+
+    @staticmethod
+    def _sync_light_type(light: Light):
+        for node in all_node_itr():
+            if isinstance(node, ToonNodeInput):
+                if node.object.data == light:
+                    node.reload()
+
+    @staticmethod
+    def register():
+        if ToonNodeInput._sync_light_type not in light_type_update_post:
+            light_type_update_post.append(ToonNodeInput._sync_light_type)
+
+    @staticmethod
+    def unregister():
+        if ToonNodeInput._sync_light_type in light_type_update_post:
+            light_type_update_post.remove(ToonNodeInput._sync_light_type)
