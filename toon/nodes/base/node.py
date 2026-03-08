@@ -16,21 +16,19 @@ if TYPE_CHECKING:
 class ToonNode(ShaderNodeCustomGroup):
     node_ready: BoolProperty(default=False)
 
-    def node_tree_key(self) -> tuple[str, str]:
-        return f".{self.bl_idname}", ""
+    def node_tree_key(self) -> str:
+        return f".{self.bl_idname}"
 
     def new_node_tree(self, name: str) -> tuple[NodeTree, bool]:
         raise NotImplementedError()
 
     def get_node_tree(self) -> tuple[NodeTree | None, bool]:
-        name, library = self.node_tree_key()
+        name = self.node_tree_key()
 
         if not name:
             return None, False
-        elif not library and name in bpy.data.node_groups:
+        elif name in bpy.data.node_groups:
             return bpy.data.node_groups[name], True
-        elif (name, library) in bpy.data.node_groups:
-            return bpy.data.node_groups[name, library], True
         else:
             return self.new_node_tree(name)
 

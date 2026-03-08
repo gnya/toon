@@ -3,6 +3,8 @@
  * author: gnya
  */
 
+#define TRACE_EPS 1.0e-5
+
 /*
  * This function retrieves the triangle's vertices and normals.
  *
@@ -10,11 +12,11 @@
  * it uses `trace` to fetch them by assuming that the normal N
  * near each vertex matches the vertex's actual normal.
  */
-void fetch_triangle(point verts[3], vector norms[3]) {
+void fetch_triangle(point verts[3], vector norms[3], float eps) {
     getattribute("geom:trianglevertices", verts);
 
     for (int i = 0; i < 3; i++) {
-        trace(verts[i] + Ng * 1.0e-4, -Ng);
+        trace(verts[i] + Ng * eps, -Ng);
         getmessage("trace", "N", norms[i]);
     }
 }
@@ -31,7 +33,7 @@ vector smooth_surface_offset(vector ng) {
     point verts[3];
     vector norms[3];
 
-    fetch_triangle(verts, norms);
+    fetch_triangle(verts, norms, TRACE_EPS);
 
     vector uvw = vector(1.0 - u - v, u, v);
     point p = verts[0] * uvw.x + verts[1] * uvw.y + verts[2] * uvw.z;

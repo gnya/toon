@@ -99,7 +99,7 @@ class ToonNodeOSLLight(ToonNodeOSL):
 
     @override
     def get_node_tree(self) -> tuple[NodeTree | None, bool]:
-        name, _ = self.node_tree_key()
+        name = self.node_tree_key()
 
         if name == "":
             return None, False
