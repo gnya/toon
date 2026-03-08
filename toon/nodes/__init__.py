@@ -1,5 +1,6 @@
 from .area_light import ToonNodeLightArea
 from .hsv_jitter import ToonNodeHSVJitter
+from .input import ToonNodeInput
 from .lambert import ToonNodeLambert
 from .matcap import ToonNodeMatCap
 from .material import ToonNodeMaterial
@@ -17,6 +18,7 @@ classes = (
     ToonNodeVisualize,
     ToonNodeHSVJitter,
     ToonNodeUVPixelSnap,
+    ToonNodeInput,
     ToonNodeLambert,
     ToonNodeMaterial,
     ToonNodeLightArea,
@@ -30,12 +32,12 @@ classes = (
 def register():
     from bpy.utils import register_class
 
-    for c in classes:
-        register_class(c)
+    for cls in classes:
+        register_class(cls)
 
 
 def unregister():
     from bpy.utils import unregister_class
 
-    for c in classes:
-        unregister_class(c)
+    for cls in classes:
+        unregister_class(cls)

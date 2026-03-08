@@ -9,7 +9,11 @@ from toon.ops import (
     NODE_OT_toon_node_reload_all,
     NODE_OT_toon_node_setup_osl_render,
 )
-from toon.props import ToonNodeSettings
+from toon.props import (
+    ToonNodeLightSettings,
+    ToonNodeMaterialSettings,
+    ToonNodeObjectSettings,
+)
 from toon.utils import override
 
 if TYPE_CHECKING:
@@ -19,10 +23,9 @@ if TYPE_CHECKING:
 def _draw_pass_index_warning(self: Panel, context: Context):
     if context.scene.render.engine == "CYCLES" and context.scene.cycles.shading_system:
         layout = self.layout
-        warning_box = layout.box()
 
-        warning_box.label(
-            text="Do not modify the pass index number directly.", icon="ERROR"
+        layout.box().label(
+            text="Do not modify the pass index number directly.", icon="INFO"
         )
 
 
@@ -40,13 +43,14 @@ class OBJECT_PT_toon_node(Panel):
         if context.object is None:
             return
 
-        settings = ToonNodeSettings.instance(context.object)
+        settings = ToonNodeObjectSettings.instance(context.object)
 
         col = layout.column()
         col.use_property_split = True
         col.prop(settings, "cast_shadows", text="Cast Shadows")
         col.prop(settings, "shadow_id", text="Shadow ID")
         col.prop(settings, "transparent_id", text="Transparent ID")
+        col.prop(settings, "shadow_terminator_geometry_offset", text="Geometry Offset")
 
     @staticmethod
     def register():
@@ -75,22 +79,22 @@ class MATERIAL_PT_toon_node(Panel):
         if context.object is None or context.material is None:
             return
 
-        object_settings = ToonNodeSettings.instance(context.object)
-        settings = ToonNodeSettings.instance(context.material)
+        object_settings = ToonNodeObjectSettings.instance(context.object)
+        material_settings = ToonNodeMaterialSettings.instance(context.material)
 
         col = layout.column()
         col.use_property_split = True
 
         row = col.row()
-        row.prop(settings, "cast_shadows", text="Cast Shadows")
+        row.prop(material_settings, "cast_shadows", text="Cast Shadows")
         row.active = int(object_settings.cast_shadows) == 0
 
         row = col.row()
-        row.prop(settings, "shadow_id", text="Shadow ID")
+        row.prop(material_settings, "shadow_id", text="Shadow ID")
         row.active = object_settings.shadow_id == 0
 
         row = col.row()
-        row.prop(settings, "transparent_id", text="Transparent ID")
+        row.prop(material_settings, "transparent_id", text="Transparent ID")
         row.active = object_settings.transparent_id == 0
 
     @staticmethod
@@ -112,6 +116,69 @@ class MATERIAL_PT_toon_node(Panel):
 
         if hasattr(types, "CYCLES_MATERIAL_PT_settings"):
             types.CYCLES_MATERIAL_PT_settings.remove(_draw_pass_index_warning)
+
+
+def _poll_toon_node_light(cls: type[Panel], context: Context) -> bool:
+    if context.object is None:
+        return False
+
+    return getattr(context.object.data, "type", "") in {"POINT", "SPOT", "AREA"}
+
+
+def _draw_toon_node_light(self: Panel, context: Context):
+    layout = self.layout
+
+    if context.object is None:
+        return
+
+    type = getattr(context.object.data, "type", "")
+    settings = ToonNodeLightSettings.instance(context.object.data)
+
+    col = layout.column()
+    col.use_property_split = True
+
+    if type == "POINT":
+        col.prop(settings, "distance", text="Distance")
+    elif type == "SPOT":
+        col.prop(settings, "size", text="Size")
+    elif type == "AREA":
+        col.prop(settings, "distance", text="Distance")
+        col.prop(settings, "width", text="Width")
+        col.prop(settings, "height", text="Height")
+
+
+class DATA_PT_toon_node_light_eevee(Panel):
+    bl_idname = "DATA_PT_toon_node_light_eevee"
+    bl_label = "Toon"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "data"
+    bl_parent_id = "DATA_PT_EEVEE_light"
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        return _poll_toon_node_light(cls, context)
+
+    @override
+    def draw(self, context: Context):
+        _draw_toon_node_light(self, context)
+
+
+class DATA_PT_toon_node_light_cycles(Panel):
+    bl_idname = "DATA_PT_toon_node_light_cycles"
+    bl_label = "Toon"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "data"
+    bl_parent_id = "CYCLES_LIGHT_PT_light"
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        return _poll_toon_node_light(cls, context)
+
+    @override
+    def draw(self, context: Context):
+        _draw_toon_node_light(self, context)
 
 
 class VIEW3D_PT_toon_node(Panel):

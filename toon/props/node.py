@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from bpy.props import EnumProperty, IntProperty, PointerProperty
-from bpy.types import Material, Object, PropertyGroup
+import math
+
+from bpy.props import EnumProperty, FloatProperty, IntProperty, PointerProperty
+from bpy.types import Light, Material, Object, PropertyGroup
 
 
-class ToonNodeSettings(PropertyGroup):
-    PROP_NAME = "toon_node_settings"
-
+class ToonNodeIDProperties(PropertyGroup):
     def _set_cast_shadows(self, value: int):
         self.id_data.pass_index = (value << 12) | (self.id_data.pass_index & ~(7 << 12))
 
@@ -57,20 +57,92 @@ class ToonNodeSettings(PropertyGroup):
         get=_get_transparent_id,
     )
 
+
+class ToonNodeMaterialSettings(ToonNodeIDProperties):
+    PROP_NAME = "toon_node_material_settings"
+
     @staticmethod
-    def instance(id: Material | Object) -> ToonNodeSettings:
-        return getattr(id, ToonNodeSettings.PROP_NAME)
+    def instance(id: Material) -> ToonNodeMaterialSettings:
+        return getattr(id, ToonNodeMaterialSettings.PROP_NAME)
 
     @staticmethod
     def register():
         setattr(
-            Material, ToonNodeSettings.PROP_NAME, PointerProperty(type=ToonNodeSettings)
-        )
-        setattr(
-            Object, ToonNodeSettings.PROP_NAME, PointerProperty(type=ToonNodeSettings)
+            Material,
+            ToonNodeMaterialSettings.PROP_NAME,
+            PointerProperty(type=ToonNodeMaterialSettings),
         )
 
     @staticmethod
     def unregister():
-        delattr(Material, ToonNodeSettings.PROP_NAME)
-        delattr(Object, ToonNodeSettings.PROP_NAME)
+        delattr(Material, ToonNodeMaterialSettings.PROP_NAME)
+
+
+class ToonNodeObjectSettings(ToonNodeIDProperties):
+    PROP_NAME = "toon_node_object_settings"
+
+    shadow_terminator_geometry_offset: FloatProperty(
+        name="Geometry Offset", default=0.1, min=0.0, max=1.0
+    )
+
+    @staticmethod
+    def instance(id: Object) -> ToonNodeObjectSettings:
+        return getattr(id, ToonNodeObjectSettings.PROP_NAME)
+
+    @staticmethod
+    def register():
+        setattr(
+            Object,
+            ToonNodeObjectSettings.PROP_NAME,
+            PointerProperty(type=ToonNodeObjectSettings),
+        )
+
+    @staticmethod
+    def unregister():
+        delattr(Object, ToonNodeObjectSettings.PROP_NAME)
+
+
+class ToonNodeLightSettings(PropertyGroup):
+    PROP_NAME = "toon_node_light_settings"
+
+    def _get_energy(self) -> float:
+        return self.id_data.energy
+
+    def _set_energy(self, value: float):
+        self.id_data.energy = value
+
+    energy: FloatProperty(
+        name="Energy", soft_min=0.0, soft_max=10.0, get=_get_energy, set=_set_energy
+    )
+
+    distance: FloatProperty(
+        name="Distance", default=1.0, min=0.0, max=float("inf"), subtype="DISTANCE"
+    )
+
+    width: FloatProperty(
+        name="Width", default=1.0, min=0.0, max=float("inf"), subtype="DISTANCE"
+    )
+
+    height: FloatProperty(
+        name="Height", default=1.0, min=0.0, max=float("inf"), subtype="DISTANCE"
+    )
+
+    size: FloatProperty(
+        name="Size", default=math.pi / 4.0, min=0.0, max=math.pi, subtype="ANGLE"
+    )
+
+    @staticmethod
+    def instance(id: Light) -> ToonNodeLightSettings:
+        return getattr(id, ToonNodeLightSettings.PROP_NAME)
+
+    @staticmethod
+    def register():
+        setattr(
+            Light,
+            ToonNodeLightSettings.PROP_NAME,
+            PointerProperty(type=ToonNodeLightSettings),
+        )
+
+    @staticmethod
+    def unregister():
+        delattr(Light, ToonNodeLightSettings.PROP_NAME)

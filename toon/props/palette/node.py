@@ -90,14 +90,24 @@ class ToonPaletteSearchIndex(PropertyGroup):
             PointerProperty(type=ToonPaletteSearchIndex),
         )
 
-        redo_post.append(ToonPaletteSearchIndex._sync_state)
-        undo_post.append(ToonPaletteSearchIndex._sync_state)
-        node_group_import_post.append(ToonPaletteSearchIndex._sync_state)
+        if ToonPaletteSearchIndex._sync_state not in redo_post:
+            redo_post.append(ToonPaletteSearchIndex._sync_state)
+
+        if ToonPaletteSearchIndex._sync_state not in undo_post:
+            undo_post.append(ToonPaletteSearchIndex._sync_state)
+
+        if ToonPaletteSearchIndex._sync_state not in node_group_import_post:
+            node_group_import_post.append(ToonPaletteSearchIndex._sync_state)
 
     @staticmethod
     def unregister():
         delattr(WindowManager, ToonPaletteSearchIndex.PROP_NAME)
 
-        redo_post.remove(ToonPaletteSearchIndex._sync_state)
-        undo_post.remove(ToonPaletteSearchIndex._sync_state)
-        node_group_import_post.remove(ToonPaletteSearchIndex._sync_state)
+        if ToonPaletteSearchIndex._sync_state in redo_post:
+            redo_post.remove(ToonPaletteSearchIndex._sync_state)
+
+        if ToonPaletteSearchIndex._sync_state in undo_post:
+            undo_post.remove(ToonPaletteSearchIndex._sync_state)
+
+        if ToonPaletteSearchIndex._sync_state in node_group_import_post:
+            node_group_import_post.remove(ToonPaletteSearchIndex._sync_state)

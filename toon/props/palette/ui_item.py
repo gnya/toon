@@ -139,8 +139,8 @@ class ToonPaletteUIItem(PropertyGroup):
             self.type = "COLOR"
             self.color_index = color.socket_index
 
-    @classmethod
-    def register(cls):
+    @staticmethod
+    def register():
         if update_all_uv_pixel_snap not in node_group_update_post:
             node_group_update_post.append(update_all_uv_pixel_snap)
 

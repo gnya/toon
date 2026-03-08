@@ -1,4 +1,8 @@
-from .node import ToonNodeSettings
+from .node import (
+    ToonNodeLightSettings,
+    ToonNodeMaterialSettings,
+    ToonNodeObjectSettings,
+)
 from .palette import (
     ToonPaletteProperty,
     ToonPaletteSearchGroup,
@@ -10,21 +14,10 @@ from .palette import (
     ToonPaletteViewSettings,
 )
 
-__all__ = [
-    ToonNodeSettings,
-    ToonPaletteProperty,
-    ToonPaletteSearchGroup,
-    ToonPaletteSearchPalette,
-    ToonPaletteSearchIndex,
-    ToonPaletteViewSettings,
-    ToonPaletteUIItem,
-    ToonPaletteUIPaletteState,
-    ToonPaletteUIState,
-]
-
-
 classes = (
-    ToonNodeSettings,
+    ToonNodeLightSettings,
+    ToonNodeMaterialSettings,
+    ToonNodeObjectSettings,
     ToonPaletteProperty,
     ToonPaletteSearchGroup,
     ToonPaletteSearchPalette,
@@ -39,12 +32,12 @@ classes = (
 def register():
     from bpy.utils import register_class
 
-    for c in classes:
-        register_class(c)
+    for cls in classes:
+        register_class(cls)
 
 
 def unregister():
     from bpy.utils import unregister_class
 
-    for c in classes:
-        unregister_class(c)
+    for cls in classes:
+        unregister_class(cls)

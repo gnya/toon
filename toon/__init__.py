@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Toon",
     "author": "gnya",
-    "version": (0, 2, 1),
+    "version": (0, 2, 2),
     "blender": (3, 6, 0),
     "description": "Pre-2.79 style render nodes with a shared color palette system.",
     "category": "Material",

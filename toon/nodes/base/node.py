@@ -16,21 +16,19 @@ if TYPE_CHECKING:
 class ToonNode(ShaderNodeCustomGroup):
     node_ready: BoolProperty(default=False)
 
-    def node_tree_key(self) -> tuple[str, str]:
-        return f".{self.bl_idname}", ""
+    def node_tree_key(self) -> str:
+        return f".{self.bl_idname}"
 
     def new_node_tree(self, name: str) -> tuple[NodeTree, bool]:
         raise NotImplementedError()
 
     def get_node_tree(self) -> tuple[NodeTree | None, bool]:
-        name, lib = self.node_tree_key()
+        name = self.node_tree_key()
 
         if not name:
             return None, False
-        elif not lib and name in bpy.data.node_groups:
+        elif name in bpy.data.node_groups:
             return bpy.data.node_groups[name], True
-        elif (name, lib) in bpy.data.node_groups:
-            return bpy.data.node_groups[name, lib], True
         else:
             return self.new_node_tree(name)
 
@@ -55,6 +53,11 @@ class ToonNode(ShaderNodeCustomGroup):
         self.node_tree, self.node_ready = None, False
 
         if node_tree is not None and node_tree.users == 0:
+            # `NodeTree.free()` is not triggered on deletion; call it explicitly.
+            for node in node_tree.nodes:
+                if hasattr(node, "free"):
+                    node.free()
+
             bpy.data.node_groups.remove(node_tree)
 
     @override

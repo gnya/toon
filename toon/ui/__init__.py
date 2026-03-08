@@ -1,5 +1,11 @@
 from .node_menu import NODE_MT_toon_node_category
-from .node_panel import MATERIAL_PT_toon_node, OBJECT_PT_toon_node, VIEW3D_PT_toon_node
+from .node_panel import (
+    DATA_PT_toon_node_light_cycles,
+    DATA_PT_toon_node_light_eevee,
+    MATERIAL_PT_toon_node,
+    OBJECT_PT_toon_node,
+    VIEW3D_PT_toon_node,
+)
 from .palette_list import VIEW3D_UL_toon_palette_entry
 from .palette_menu import (
     VIEW3D_MT_toon_palette,
@@ -15,6 +21,8 @@ from .palette_panel import VIEW3D_PT_toon_palette
 classes = (
     NODE_MT_toon_node_category,
     VIEW3D_PT_toon_node,
+    DATA_PT_toon_node_light_cycles,
+    DATA_PT_toon_node_light_eevee,
     MATERIAL_PT_toon_node,
     OBJECT_PT_toon_node,
     VIEW3D_UL_toon_palette_entry,
@@ -32,12 +40,12 @@ classes = (
 def register():
     from bpy.utils import register_class
 
-    for c in classes:
-        register_class(c)
+    for cls in classes:
+        register_class(cls)
 
 
 def unregister():
     from bpy.utils import unregister_class
 
-    for c in classes:
-        unregister_class(c)
+    for cls in classes:
+        unregister_class(cls)

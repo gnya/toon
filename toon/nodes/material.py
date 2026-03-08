@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from toon.props import ToonNodeObjectSettings
 from toon.utils import override
 
 from .base import ToonNodeOSL
@@ -35,11 +36,6 @@ class ToonNodeMaterial(ToonNodeOSL):
         i.max_value = 1.0
         i.hide_value = True
 
-        i = node_tree.inputs.new("NodeSocketFloatFactor", "Cutoff")
-        i.default_value = 0.1
-        i.min_value = 0.0
-        i.max_value = 1.0
-
         i = node_tree.inputs.new("NodeSocketFloatFactor", "Reflectance")
         i.default_value = 0.5
         i.min_value = 0.0
@@ -59,9 +55,15 @@ class ToonNodeMaterial(ToonNodeOSL):
         node_tree.links.new(input.outputs[0], script.inputs[0])
         node_tree.links.new(input.outputs[1], script.inputs[1])
         node_tree.links.new(input.outputs[2], script.inputs[2])
-        node_tree.links.new(input.outputs[3], script.inputs[3])
-        node_tree.links.new(input.outputs[4], script.inputs[4])
-        node_tree.links.new(input.outputs[5], script.inputs[5])
+        node_tree.links.new(input.outputs[3], script.inputs[4])
+        node_tree.links.new(input.outputs[4], script.inputs[5])
+
+        attr = node_tree.nodes.new("ShaderNodeAttribute")
+        attr.attribute_name = (
+            f"{ToonNodeObjectSettings.PROP_NAME}.shadow_terminator_geometry_offset"
+        )
+        attr.attribute_type = "OBJECT"
+        node_tree.links.new(attr.outputs[2], script.inputs[3])
 
         preview_mat = node_tree.nodes.new("ShaderNodeBsdfDiffuse")
         preview_mat.inputs[0].default_value = (1.0, 1.0, 1.0, 1.0)

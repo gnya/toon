@@ -93,4 +93,9 @@ class NODE_OT_toon_node_setup_osl_render(Operator):
         scene.view_settings.gamma = 1.0
         scene.render.dither_intensity = 0.0
 
+        # Reload nodes that failed to load because Cycles/OSL were disabled.
+        for node in all_node_itr():
+            if hasattr(node, "reload") and not getattr(node, "node_ready", False):
+                node.reload()
+
         return {"FINISHED"}

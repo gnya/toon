@@ -5,7 +5,7 @@ from _cycles import osl_compile  # type: ignore
 from bpy.utils import resource_path
 
 SHADER_PREFIX = "toon_addon"
-SCRIPTS_PATH = os.path.dirname(os.path.abspath(__file__))
+SCRIPTS_PATH = f"{os.path.dirname(os.path.abspath(__file__))}\\osl"
 SHADERS_PATH = f"{resource_path('USER')}\\shaders"
 
 
