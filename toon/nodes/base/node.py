@@ -23,14 +23,14 @@ class ToonNode(ShaderNodeCustomGroup):
         raise NotImplementedError()
 
     def get_node_tree(self) -> tuple[NodeTree | None, bool]:
-        name, lib = self.node_tree_key()
+        name, library = self.node_tree_key()
 
         if not name:
             return None, False
-        elif not lib and name in bpy.data.node_groups:
+        elif not library and name in bpy.data.node_groups:
             return bpy.data.node_groups[name], True
-        elif (name, lib) in bpy.data.node_groups:
-            return bpy.data.node_groups[name, lib], True
+        elif (name, library) in bpy.data.node_groups:
+            return bpy.data.node_groups[name, library], True
         else:
             return self.new_node_tree(name)
 

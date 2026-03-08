@@ -109,11 +109,11 @@ def _rebind_sockets(
                 pass
 
             if socket.is_output:
-                for s in binded_sockets:
-                    node_tree.links.new(socket, s)
+                for binded_socket in binded_sockets:
+                    node_tree.links.new(socket, binded_socket)
             else:
-                for s in binded_sockets:
-                    node_tree.links.new(s, socket)
+                for binded_socket in binded_sockets:
+                    node_tree.links.new(binded_socket, socket)
 
 
 class NodeLinkRebinder:

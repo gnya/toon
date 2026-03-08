@@ -47,10 +47,10 @@ def list_pids(prefix: str) -> list[str]:
 def register_pid(prefix: str):
     pids = list_pids(prefix)
     filepath = _lock_filepath(prefix)
-    pid = os.getpid()
+    this_pid = os.getpid()
 
-    if str(pid) not in pids:
-        pids.append(str(pid))
+    if str(this_pid) not in pids:
+        pids.append(str(this_pid))
 
         with open(filepath, "w") as f:
             f.write("\n".join(pids))
@@ -59,13 +59,13 @@ def register_pid(prefix: str):
 def unregister_pid(prefix: str):
     pids = list_pids(prefix)
     filepath = _lock_filepath(prefix)
-    pid = os.getpid()
+    this_pid = os.getpid()
 
     alive_pids = []
 
-    for p in pids:
-        if p != str(pid) and _pid_exists(int(p)):
-            alive_pids.append(p)
+    for pid in pids:
+        if pid != str(this_pid) and _pid_exists(int(pid)):
+            alive_pids.append(pid)
 
     if alive_pids:
         with open(filepath, "w") as f:

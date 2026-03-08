@@ -37,9 +37,9 @@ class ToonNodeVisualize(ToonNodeOSL):
 
     @override
     def node_tree_key(self) -> tuple[str, str]:
-        name, lib = super().node_tree_key()
+        name, library = super().node_tree_key()
 
-        return f"{name}_{self.visualize_type}", lib
+        return f"{name}_{self.visualize_type}", library
 
     @override
     def init_sockets(self, node_tree: NodeTree):
