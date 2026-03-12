@@ -11,6 +11,7 @@ from toon.nodes import (
     ToonNodeMatCap,
     ToonNodeOutput,
     ToonNodePalette,
+    ToonNodeTransform,
     ToonNodeUVPixelSnap,
     ToonNodeVisualize,
 )
@@ -56,6 +57,7 @@ class NODE_MT_toon_node_category(Menu):
         self._draw_node(col, ToonNodeMatCap)
         self._draw_node(col, ToonNodeHSVJitter)
         self._draw_node(col, ToonNodeUVPixelSnap)
+        self._draw_node(col, ToonNodeTransform)
         col.separator()
         self._draw_node(col, ToonNodeInput)
         col.separator()
