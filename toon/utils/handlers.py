@@ -42,7 +42,7 @@ def _node_group_import(update: DepsgraphUpdate):
 
 def _node_group_update(update: DepsgraphUpdate):
     if (
-        update.is_updated_shading
+        not update.is_updated_shading
         and not update.is_updated_geometry
         and not update.is_updated_transform
     ):

@@ -135,3 +135,6 @@ class ToonPaletteColor:
 
     def init(self):
         self.type = "COLOR"
+
+    def clear(self):
+        remove_nodes(self._socket())

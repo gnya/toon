@@ -72,6 +72,7 @@ class ToonPaletteGroup:
         elif (color := self.get(color_name)) is None:
             return False
         else:
+            color.clear()
             socket = self.node_tree.outputs[color.socket_index]
             self.node_tree.outputs.remove(socket)
 
