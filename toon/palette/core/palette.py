@@ -81,6 +81,14 @@ class ToonPalette:
     def is_linked(self) -> bool:
         return self.library != ""
 
+    @property
+    def has_users(self) -> bool:
+        for group in self._groups():
+            if group.has_users:
+                return True
+
+        return False
+
     def add(self, group_name: str) -> ToonPaletteGroup:
         if self.is_orphens:
             raise RuntimeError("No header found in this palette.")

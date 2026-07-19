@@ -18,6 +18,7 @@ from .palette_menu import (
     VIEW3D_MT_toon_palette,
     VIEW3D_MT_toon_palette_add,
     VIEW3D_MT_toon_palette_group,
+    VIEW3D_MT_toon_palettes,
 )
 
 if TYPE_CHECKING:
@@ -138,7 +139,9 @@ class VIEW3D_PT_toon_palette(Panel):
     def draw(self, context: Context):
         layout = self.layout
 
-        layout.menu(VIEW3D_MT_toon_palette_add.bl_idname, text="Add Palette")
+        row = layout.row(align=True)
+        row.menu(VIEW3D_MT_toon_palette_add.bl_idname, text="Add Palette")
+        row.menu(VIEW3D_MT_toon_palettes.bl_idname, text="", icon="DOWNARROW_HLT")
 
         states = ToonPaletteUIState.current()
 

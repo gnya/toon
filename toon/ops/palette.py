@@ -27,6 +27,21 @@ if TYPE_CHECKING:
     from toon.props import ToonPaletteUIPaletteState
 
 
+class ToonPalettesOperator(Operator):
+    def _execute_impl(self) -> bool:
+        raise NotImplementedError()
+
+    @override
+    def execute(self, context: Context) -> set[OperatorReturnItems]:
+        if not self._execute_impl():
+            return {"CANCELLED"}
+
+        ToonPaletteUIState.request_update()
+        ToonPaletteSearchIndex.request_update()
+
+        return {"FINISHED"}
+
+
 class ToonPaletteOperator(Operator):
     @classmethod
     def _poll_impl(cls, state: ToonPaletteUIPaletteState) -> bool:
@@ -56,21 +71,15 @@ class ToonPaletteOperator(Operator):
         return {"FINISHED"}
 
 
-class VIEW3D_OT_toon_palette_add(Operator):
+class VIEW3D_OT_toon_palette_add(ToonPalettesOperator):
     bl_idname = "view3d.toon_palette_add"
     bl_label = "Add Palette"
     bl_description = "Add empty palette"
     bl_options = {"REGISTER", "UNDO"}
 
     @override
-    def execute(self, context: Context) -> set[OperatorReturnItems]:
-        if not get_facade().add("Palette"):
-            return {"CANCELLED"}
-
-        ToonPaletteUIState.request_update()
-        ToonPaletteSearchIndex.request_update()
-
-        return {"FINISHED"}
+    def _execute_impl(self) -> bool:
+        return get_facade().add("Palette") is not None
 
 
 class VIEW3D_OT_toon_palette_remove(ToonPaletteOperator):
@@ -82,6 +91,19 @@ class VIEW3D_OT_toon_palette_remove(ToonPaletteOperator):
     @override
     def _execute_impl(self, state: ToonPaletteUIPaletteState) -> bool:
         return get_facade().remove(state.palette_name)
+
+
+class VIEW3D_OT_toon_palette_purge_unused(ToonPalettesOperator):
+    bl_idname = "view3d.toon_palette_purge_unused"
+    bl_label = "Purge Unused Palettes"
+    bl_description = "Purge unused palettes"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @override
+    def _execute_impl(self) -> bool:
+        get_facade().purge_unused()
+
+        return True
 
 
 class VIEW3D_OT_toon_palette_add_group(ToonPaletteOperator):
