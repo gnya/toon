@@ -114,6 +114,7 @@ class VIEW3D_PT_toon_palette(Panel):
             col.prop(*item.color_ptr, text="Color")
         elif item.color_type == "TEXTURE":
             col.template_ID(*item.texture_ptr, new="image.new", open="image.open")
+            col.prop(*item.mute_uv_pixel_snap_ptr, text="Mute UV Pixel Snap")
             col.prop(*item.uv_map_ptr, text="UV Map")
         elif item.color_type == "VECTOR":
             col.prop(*item.color_ptr, text="Vector", slider=True)

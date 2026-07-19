@@ -21,6 +21,7 @@ from toon.palette import (
     get_group,
     get_group_name,
     get_library,
+    get_mute_uv_pixel_snap_ptr,
     get_palette,
     get_texture_ptr,
     get_uv_map_ptr,
@@ -91,6 +92,10 @@ class ToonPaletteUIItem(PropertyGroup):
     @property
     def texture_ptr(self) -> tuple[Any, str]:
         return get_texture_ptr(self.node_tree, self.color_index)
+
+    @property
+    def mute_uv_pixel_snap_ptr(self) -> tuple[Any, str]:
+        return get_mute_uv_pixel_snap_ptr(self.node_tree, self.color_index)
 
     @property
     def uv_map_ptr(self) -> tuple[Any, str]:

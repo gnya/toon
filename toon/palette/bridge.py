@@ -90,6 +90,15 @@ def get_texture_ptr(node_tree: NodeTree | None, index: int) -> tuple[Any, str]:
         return None, ""
 
 
+def get_mute_uv_pixel_snap_ptr(
+    node_tree: NodeTree | None, index: int
+) -> tuple[Any, str]:
+    if is_group(node_tree):
+        return ToonPaletteColor(node_tree, index).mute_uv_pixel_snap_ptr
+    else:
+        return None, ""
+
+
 def get_uv_map_ptr(node_tree: NodeTree | None, index: int) -> tuple[Any, str]:
     if is_group(node_tree):
         return ToonPaletteColor(node_tree, index).uv_map_ptr

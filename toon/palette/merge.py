@@ -18,6 +18,7 @@ def merge_color(src: ToonPaletteColor, dst: ToonPaletteColor) -> bool:
         setattr(*dst.color_ptr, getattr(*src.color_ptr))
     elif type == "TEXTURE":
         setattr(*dst.texture_ptr, getattr(*src.texture_ptr))
+        setattr(*dst.mute_uv_pixel_snap_ptr, getattr(*src.mute_uv_pixel_snap_ptr))
         setattr(*dst.uv_map_ptr, getattr(*src.uv_map_ptr))
     elif type == "VECTOR":
         setattr(*dst.color_ptr, getattr(*src.color_ptr))
