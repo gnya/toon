@@ -33,7 +33,9 @@ class VIEW3D_MT_toon_palettes(Menu):
         layout = self.layout
 
         layout.operator(
-            VIEW3D_OT_toon_palette_purge_unused.bl_idname, text="Purge Unused Palettes"
+            VIEW3D_OT_toon_palette_purge_unused.bl_idname,
+            text="Purge Unused Palettes",
+            icon="ORPHAN_DATA",
         )
 
 

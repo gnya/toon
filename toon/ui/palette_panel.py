@@ -43,14 +43,15 @@ class VIEW3D_PT_toon_palette(Panel):
         icon = "COLOR" if not state.is_orphans() else "ERROR"
         sub_row.label(icon=icon if not state.is_linked() else "LINKED")
 
+        icon = "NONE" if state.has_users() else "ORPHAN_DATA"
         sub_row = row.row(align=True)
 
         if not state.is_orphans() and not state.is_linked():
-            sub_row.prop(state, "palette_name", text="")
+            sub_row.prop(state, "palette_name", text="", icon=icon)
         else:
             sub_sub_row = sub_row.row(align=True)
             sub_sub_row.enabled = False
-            sub_sub_row.prop(state, "palette_name", text="")
+            sub_sub_row.prop(state, "palette_name", text="", icon=icon)
 
         sub_row.menu(VIEW3D_MT_toon_palette.bl_idname, text="", icon="DOWNARROW_HLT")
 

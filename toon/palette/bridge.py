@@ -120,6 +120,20 @@ def get_color(node_tree: NodeTree | None, index: int) -> ToonPaletteColor | None
         return None
 
 
+def get_palette_has_users(node_tree: NodeTree | None) -> bool:
+    if (palette := get_palette(node_tree)) is not None:
+        return palette.has_users
+    else:
+        return False
+
+
+def get_group_has_users(node_tree: NodeTree | None) -> bool:
+    if is_group(node_tree):
+        return ToonPaletteGroup(node_tree).has_users
+    else:
+        return False
+
+
 def update_all_uv_pixel_snap(node_tree: NodeTree | None):
     if is_group(node_tree):
         group = ToonPaletteGroup(node_tree)
