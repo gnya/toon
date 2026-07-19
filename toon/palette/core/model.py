@@ -107,3 +107,15 @@ class ToonPaletteFacade:
             palette.order = index - offset
 
         return True
+
+    def purge_unused(self):
+        palettes, orphans = self._palettes()
+
+        for palette in palettes:
+            if not palette.has_users:
+                self.remove(palette.name, palette.library)
+
+        if orphans is not None:
+            for group in orphans.groups():
+                if not group.has_users:
+                    orphans.remove(group.name, group.library)

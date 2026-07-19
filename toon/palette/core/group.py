@@ -55,6 +55,10 @@ class ToonPaletteGroup:
     def order(self, value: int):
         set_order(self.node_tree, value)
 
+    @property
+    def has_users(self) -> bool:
+        return self.node_tree.users > self.size() + 2
+
     def add(self, color_name: str) -> ToonPaletteColor:
         if self.is_linked:
             raise RuntimeError("Linked palette is read-only.")
@@ -72,6 +76,7 @@ class ToonPaletteGroup:
         elif (color := self.get(color_name)) is None:
             return False
         else:
+            color.clear()
             socket = self.node_tree.outputs[color.socket_index]
             self.node_tree.outputs.remove(socket)
 

@@ -19,8 +19,10 @@ from toon.palette import (
     get_color_type,
     get_colors,
     get_group,
+    get_group_has_users,
     get_group_name,
     get_library,
+    get_mute_uv_pixel_snap_ptr,
     get_palette,
     get_texture_ptr,
     get_uv_map_ptr,
@@ -93,6 +95,10 @@ class ToonPaletteUIItem(PropertyGroup):
         return get_texture_ptr(self.node_tree, self.color_index)
 
     @property
+    def mute_uv_pixel_snap_ptr(self) -> tuple[Any, str]:
+        return get_mute_uv_pixel_snap_ptr(self.node_tree, self.color_index)
+
+    @property
     def uv_map_ptr(self) -> tuple[Any, str]:
         return get_uv_map_ptr(self.node_tree, self.color_index)
 
@@ -108,6 +114,9 @@ class ToonPaletteUIItem(PropertyGroup):
 
     def is_linked(self) -> bool:
         return get_library(self.node_tree) != ""
+
+    def has_users(self) -> bool:
+        return get_group_has_users(self.node_tree)
 
     def palette_data(self) -> ToonPalette | None:
         return get_palette(self.node_tree)

@@ -125,13 +125,25 @@ class ToonPaletteColor:
         return (inputs[1], "default_value"), (inputs[2], "default_value")
 
     @property
+    def mute_uv_pixel_snap_ptr(self) -> tuple[Any, str]:
+        node = search_node(self._socket(), "ToonNodeUVPixelSnap")
+
+        if node is None:
+            return None, ""
+
+        return node, "mute"
+
+    @property
     def uv_map_ptr(self) -> tuple[Any, str]:
         node = search_node(self._socket(), "ShaderNodeUVMap")
 
         if node is None:
-            return "", ""
+            return None, ""
 
         return node, "uv_map"
 
     def init(self):
         self.type = "COLOR"
+
+    def clear(self):
+        remove_nodes(self._socket())

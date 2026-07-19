@@ -18,6 +18,7 @@ from toon.palette import (
     get_groups,
     get_library,
     get_palette,
+    get_palette_has_users,
     get_palette_name,
     set_palette_name,
 )
@@ -89,6 +90,9 @@ class ToonPaletteUIPaletteState(PropertyGroup):
 
     def is_linked(self) -> bool:
         return get_library(self.header) != ""
+
+    def has_users(self) -> bool:
+        return get_palette_has_users(self.header)
 
     def palette_data(self) -> ToonPalette | None:
         return get_palette(self.header)

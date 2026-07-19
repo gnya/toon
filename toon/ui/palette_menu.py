@@ -12,6 +12,7 @@ from toon.ops import (
     VIEW3D_OT_toon_palette_merge_group,
     VIEW3D_OT_toon_palette_move,
     VIEW3D_OT_toon_palette_paste,
+    VIEW3D_OT_toon_palette_purge_unused,
     VIEW3D_OT_toon_palette_remove_group,
 )
 from toon.palette import mergable_groups, mergable_palettes
@@ -21,6 +22,21 @@ if TYPE_CHECKING:
     from bpy.types import Context
 
     from toon.props import ToonPaletteUIPaletteState
+
+
+class VIEW3D_MT_toon_palettes(Menu):
+    bl_idname = "VIEW3D_MT_toon_palettes"
+    bl_label = "Palettes Specials"
+
+    @override
+    def draw(self, context: Context):
+        layout = self.layout
+
+        layout.operator(
+            VIEW3D_OT_toon_palette_purge_unused.bl_idname,
+            text="Purge Unused Palettes",
+            icon="ORPHAN_DATA",
+        )
 
 
 class VIEW3D_MT_toon_palette_add(Menu):

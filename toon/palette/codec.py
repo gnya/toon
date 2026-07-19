@@ -81,6 +81,7 @@ def encode_color(color: ToonPaletteColor) -> SerializedData:
         data["color"] = list(getattr(*color.color_ptr))
     elif type == "TEXTURE":
         data["texture"] = encode_texture(color.texture_ptr)
+        data["mute_uv_pixel_snap"] = getattr(*color.mute_uv_pixel_snap_ptr)
         data["uv_map"] = getattr(*color.uv_map_ptr)
     elif type == "VECTOR":
         data["vector"] = list(getattr(*color.color_ptr))
@@ -136,6 +137,7 @@ def decode_color(data: SerializedData, group: ToonPaletteGroup):
         setattr(*color.color_ptr, body.get("color", (1.0, 1.0, 1.0, 1.0)))
     elif type == "TEXTURE":
         decode_texture(body.get("texture", {}), color.texture_ptr)
+        setattr(*color.mute_uv_pixel_snap_ptr, body.get("mute_uv_pixel_snap", ""))
         setattr(*color.uv_map_ptr, body.get("uv_map", ""))
     elif type == "VECTOR":
         setattr(*color.color_ptr, body.get("vector", (0.0, 0.0, 0.0)))

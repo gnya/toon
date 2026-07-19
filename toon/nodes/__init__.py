@@ -9,6 +9,7 @@ from .palette import ToonNodePalette
 from .point_light import ToonNodeLightPoint
 from .spot_light import ToonNodeLightSpot
 from .sun_light import ToonNodeLightSun
+from .transform import ToonNodeTransform
 from .uv_pixel_snap import ToonNodeUVPixelSnap
 from .visualize import ToonNodeVisualize
 
@@ -18,6 +19,7 @@ classes = (
     ToonNodeVisualize,
     ToonNodeHSVJitter,
     ToonNodeUVPixelSnap,
+    ToonNodeTransform,
     ToonNodeInput,
     ToonNodeLambert,
     ToonNodeMaterial,

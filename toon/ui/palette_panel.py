@@ -18,6 +18,7 @@ from .palette_menu import (
     VIEW3D_MT_toon_palette,
     VIEW3D_MT_toon_palette_add,
     VIEW3D_MT_toon_palette_group,
+    VIEW3D_MT_toon_palettes,
 )
 
 if TYPE_CHECKING:
@@ -42,14 +43,15 @@ class VIEW3D_PT_toon_palette(Panel):
         icon = "COLOR" if not state.is_orphans() else "ERROR"
         sub_row.label(icon=icon if not state.is_linked() else "LINKED")
 
+        icon = "NONE" if state.has_users() else "ORPHAN_DATA"
         sub_row = row.row(align=True)
 
         if not state.is_orphans() and not state.is_linked():
-            sub_row.prop(state, "palette_name", text="")
+            sub_row.prop(state, "palette_name", text="", icon=icon)
         else:
             sub_sub_row = sub_row.row(align=True)
             sub_sub_row.enabled = False
-            sub_sub_row.prop(state, "palette_name", text="")
+            sub_sub_row.prop(state, "palette_name", text="", icon=icon)
 
         sub_row.menu(VIEW3D_MT_toon_palette.bl_idname, text="", icon="DOWNARROW_HLT")
 
@@ -114,6 +116,7 @@ class VIEW3D_PT_toon_palette(Panel):
             col.prop(*item.color_ptr, text="Color")
         elif item.color_type == "TEXTURE":
             col.template_ID(*item.texture_ptr, new="image.new", open="image.open")
+            col.prop(*item.mute_uv_pixel_snap_ptr, text="Mute UV Pixel Snap")
             col.prop(*item.uv_map_ptr, text="UV Map")
         elif item.color_type == "VECTOR":
             col.prop(*item.color_ptr, text="Vector", slider=True)
@@ -137,7 +140,9 @@ class VIEW3D_PT_toon_palette(Panel):
     def draw(self, context: Context):
         layout = self.layout
 
-        layout.menu(VIEW3D_MT_toon_palette_add.bl_idname, text="Add Palette")
+        row = layout.row(align=True)
+        row.menu(VIEW3D_MT_toon_palette_add.bl_idname, text="Add Palette")
+        row.menu(VIEW3D_MT_toon_palettes.bl_idname, text="", icon="DOWNARROW_HLT")
 
         states = ToonPaletteUIState.current()
 

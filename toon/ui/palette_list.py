@@ -43,12 +43,14 @@ class VIEW3D_UL_toon_palette_entry(UIList):
                 i = "DOWNARROW_HLT" if item.show_expanded else "RIGHTARROW"
                 row.prop(item, "show_expanded", text="", emboss=False, icon=i)
 
+                i = "NONE" if item.has_users() else "ORPHAN_DATA"
+
                 if not item.is_linked():
-                    row.prop(item, "group_name", text="", emboss=False)
+                    row.prop(item, "group_name", text="", emboss=False, icon=i)
                 else:
                     sub_row = row.row(align=True)
                     sub_row.enabled = False
-                    sub_row.prop(item, "group_name", text="", emboss=False)
+                    sub_row.prop(item, "group_name", text="", emboss=False, icon=i)
             elif item.type == "COLOR":
                 row.separator(factor=3.0)
                 row.enabled = not item.is_linked()
