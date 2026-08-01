@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import bpy
-from bpy.props import PointerProperty
+from bpy.props import PointerProperty, StringProperty
 from bpy.types import Object
 
 from toon.utils import NodeLinkRebinder, override
@@ -20,20 +20,28 @@ class ToonNodeTransform(ToonNode):
     DRIVER_VARIABLE_NAME = "_ToonNodeTransform"
 
     def _update_object(self, context: Context):
+        # Call _update_bone.
+        self.bone = ""
+
+    def _update_bone(self, context: Context):
         with NodeLinkRebinder(self):
             self.free()
             self.init(context)
 
     object: PointerProperty(name="Object", type=Object, update=_update_object)
 
+    bone: StringProperty(name="Bone", update=_update_bone)
+
     def _get_node_tree(self, name: str) -> NodeTree | None:
         for node_tree in bpy.data.node_groups:
-            if not node_tree.name.startswith(name):
-                continue
-
-            for node in node_tree.nodes:
-                if hasattr(node, "object") and node.object == self.object:
-                    return node_tree
+            if node_tree.name.startswith(name) and any(
+                t.id == self.object and t.bone_target == self.bone
+                for f in node_tree.animation_data.drivers
+                for v in f.driver.variables
+                if v.name == self.DRIVER_VARIABLE_NAME
+                for t in v.targets
+            ):
+                return node_tree
 
         return None
 
@@ -44,6 +52,7 @@ class ToonNodeTransform(ToonNode):
         variable.type = "TRANSFORMS"
         target = variable.targets[0]
         target.id = self.object
+        target.bone_target = self.bone
         target.transform_type = transform_type
         target.transform_space = "WORLD_SPACE"
         driver.expression = self.DRIVER_VARIABLE_NAME
@@ -110,3 +119,6 @@ class ToonNodeTransform(ToonNode):
         super().draw_buttons(context, layout)
 
         layout.prop(self, "object", text="Object")
+
+        if self.object is not None and self.object.type == "ARMATURE":
+            layout.prop_search(self, "bone", self.object.data, "bones")

@@ -32,22 +32,14 @@ class ToonNodeOSLLight(ToonNodeOSL):
 
     def _get_node_tree(self, name: str) -> NodeTree | None:
         for node_tree in bpy.data.node_groups:
-            if not node_tree.name.startswith(name):
-                continue
-
-            anim = node_tree.animation_data
-
-            if anim is None:
-                continue
-
-            for fcurve in anim.drivers:
-                for variable in fcurve.driver.variables:
-                    if variable.name != self.DRIVER_VARIABLE_NAME:
-                        continue
-
-                    for target in variable.targets:
-                        if target.id == self.object:
-                            return node_tree
+            if node_tree.name.startswith(name) and any(
+                t.id == self.object
+                for f in node_tree.animation_data.drivers
+                for v in f.driver.variables
+                if v.name == self.DRIVER_VARIABLE_NAME
+                for t in v.targets
+            ):
+                return node_tree
 
         return None
 
