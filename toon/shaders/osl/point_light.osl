@@ -3,7 +3,7 @@
  * author: gnya
  */
 
- #include "node_math.h"
+#include "node_math.h"
 
 shader point_light(
     vector Location = vector(0.0, 0.0, 0.0),
