@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import bpy
 
 from toon.ops import NODE_OT_toon_node_reload_all, NODE_OT_toon_node_setup_osl_render
-from toon.props import ToonNodeSceneLight
+from toon.props import ToonNodeSceneSettings
 from toon.utils import override
 
 from .base import ToonNode
@@ -22,7 +22,7 @@ class ToonNodeInput(ToonNode):
         node = node_tree.nodes.new("ShaderNodeAttribute")
 
         node.attribute_type = "VIEW_LAYER"
-        node.attribute_name = f"{ToonNodeSceneLight.PROP_NAME}.{name}"
+        node.attribute_name = f"{ToonNodeSceneSettings.PROP_NAME}.{name}"
 
         return node
 

@@ -13,7 +13,7 @@ from toon.props import (
     ToonNodeLightSettings,
     ToonNodeMaterialSettings,
     ToonNodeObjectSettings,
-    ToonNodeSceneLight,
+    ToonNodeSceneSettings,
 )
 from toon.utils import override
 
@@ -224,10 +224,13 @@ class SCENE_PT_toon_node_light(Panel):
     def draw(self, context: Context):
         layout = self.layout
 
-        light = ToonNodeSceneLight.instance(context.scene)
+        settings = ToonNodeSceneSettings.instance(context.scene)
 
         col = layout.column()
         col.use_property_split = True
 
-        col.prop(light, "light", text="Light")
-        col.prop(light, "preview_threshold", text="Preview Diffuse Threshold")
+        col.prop(settings.light_0, "light", text="Light 0")
+        col.prop(settings.light_1, "light", text="Light 1")
+        col.prop(settings.light_2, "light", text="Light 2")
+        col.prop(settings.light_3, "light", text="Light 3")
+        col.prop(settings, "preview_threshold", text="Preview Diffuse Threshold")

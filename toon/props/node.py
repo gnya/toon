@@ -194,8 +194,6 @@ class ToonNodeLightSettings(PropertyGroup):
 
 
 class ToonNodeSceneLight(PropertyGroup):
-    PROP_NAME = "toon_node_scene_light"
-
     def _poll_light(self, obj: Object) -> bool:
         return obj.type in {"LIGHT"}
 
@@ -289,6 +287,18 @@ class ToonNodeSceneLight(PropertyGroup):
 
     height: FloatProperty(get=_get_height)
 
+
+class ToonNodeSceneSettings(PropertyGroup):
+    PROP_NAME = "toon_node_scene_settings"
+
+    light_0: PointerProperty(type=ToonNodeSceneLight)
+
+    light_1: PointerProperty(type=ToonNodeSceneLight)
+
+    light_2: PointerProperty(type=ToonNodeSceneLight)
+
+    light_3: PointerProperty(type=ToonNodeSceneLight)
+
     preview_threshold: FloatProperty(
         name="Preview Diffuse Threshold",
         default=0.1,
@@ -299,16 +309,16 @@ class ToonNodeSceneLight(PropertyGroup):
 
     @staticmethod
     def instance(id: Scene) -> ToonNodeLightSettings:
-        return getattr(id, ToonNodeSceneLight.PROP_NAME)
+        return getattr(id, ToonNodeSceneSettings.PROP_NAME)
 
     @staticmethod
     def register():
         setattr(
             Scene,
-            ToonNodeSceneLight.PROP_NAME,
-            PointerProperty(type=ToonNodeSceneLight),
+            ToonNodeSceneSettings.PROP_NAME,
+            PointerProperty(type=ToonNodeSceneSettings),
         )
 
     @staticmethod
     def unregister():
-        delattr(Scene, ToonNodeSceneLight.PROP_NAME)
+        delattr(Scene, ToonNodeSceneSettings.PROP_NAME)

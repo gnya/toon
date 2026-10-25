@@ -6,7 +6,7 @@
 #include "group_id.h"
 #include "shadow.h"
 
-#define MAX_LOOP 50
+#define MAX_LOOP 25
 #define TRACE_EPS 1.0e-5
 
 /*

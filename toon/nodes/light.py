@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from toon.props import ToonNodeSceneLight
-from toon.utils import override
+from bpy.props import IntProperty
+
+from toon.props import ToonNodeSceneSettings
+from toon.utils import NodeLinkRebinder, override
 
 from .base import ToonNodeOSL
 
 if TYPE_CHECKING:
-    from bpy.types import Node, NodeTree
+    from bpy.types import Context, Node, NodeTree, UILayout
 
 
 class ToonNodeLight(ToonNodeOSL):
@@ -16,13 +18,26 @@ class ToonNodeLight(ToonNodeOSL):
     bl_label = "Light"
     osl_name = "light"
 
+    def _update_light_index(self, context: Context):
+        with NodeLinkRebinder(self):
+            self.free()
+            self.init(context)
+
+    light_index: IntProperty(name="Light Index", default=0, update=_update_light_index)
+
     def _new_attribute_node(self, node_tree: NodeTree, name: str) -> Node:
         node = node_tree.nodes.new("ShaderNodeAttribute")
 
         node.attribute_type = "VIEW_LAYER"
-        node.attribute_name = f"{ToonNodeSceneLight.PROP_NAME}.{name}"
+        node.attribute_name = (
+            f"{ToonNodeSceneSettings.PROP_NAME}.light_{self.light_index}.{name}"
+        )
 
         return node
+
+    @override
+    def node_tree_key(self) -> str:
+        return f"{super().node_tree_key()}_{self.light_index}"
 
     @override
     def init_sockets(self, node_tree: NodeTree):
@@ -63,3 +78,9 @@ class ToonNodeLight(ToonNodeOSL):
         node_tree.links.new(diffuse_threshold.outputs[0], output.inputs[3])
         node_tree.links.new(specular_threshold.outputs[0], output.inputs[4])
         node_tree.links.new(script.outputs[3], output.inputs[5])
+
+    @override
+    def draw_buttons(self, context: Context, layout: UILayout):
+        super().draw_buttons(context, layout)
+
+        layout.prop(self, "light_index", text="")
