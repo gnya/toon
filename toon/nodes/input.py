@@ -66,22 +66,23 @@ class ToonNodeInput(ToonNode):
         node_tree.outputs.new("NodeSocketFloat", "Specular")
         node_tree.outputs.new("NodeSocketVector", "UV")
 
+        light = node_tree.nodes.new("ToonNodeLight")
         input = node_tree.nodes.new("NodeGroupInput")
+
+        light.object = self.object
 
         type = "SUN" if self.object is None else self.object.data.type
 
         if type == "POINT":
-            light = node_tree.nodes.new("ToonNodeLightPoint")
+            light.inputs[0].default_value = 0.0
         elif type == "SUN":
-            light = node_tree.nodes.new("ToonNodeLightSun")
+            light.inputs[0].default_value = 1.0
         elif type == "SPOT":
-            light = node_tree.nodes.new("ToonNodeLightSpot")
+            light.inputs[0].default_value = 2.0
         elif type == "AREA":
-            light = node_tree.nodes.new("ToonNodeLightArea")
+            light.inputs[0].default_value = 3.0
         else:
             raise ValueError(f"Unknown data type. : {type}")
-
-        light.object = self.object
 
         material = node_tree.nodes.new("ToonNodeMaterial")
         node_tree.links.new(light.outputs[0], material.inputs[0])

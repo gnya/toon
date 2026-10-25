@@ -29,6 +29,7 @@ shader light(
     matrix mat = transpose(euler_to_mat(Rotation));
 
     if (Type == POINT_LIGHT) {
+        // inputs: Location, Rotation, Energy, Size
         vector direction = normalize(Location - P);
         vector incomming = transform(mat, direction);
 
@@ -40,6 +41,7 @@ shader light(
         Light = direction * strength;
         RayLength = distance(Location, P);
     } else if (Type == SUN_LIGHT) {
+        // inputs: Rotation, Energy
         vector z_axis = vector(mat[0][2], mat[1][2], mat[2][2]);
 
         float strength = Energy / M_PI;
@@ -47,6 +49,7 @@ shader light(
         Light = z_axis * strength;
         RayLength = -1.0;
     } else if (Type == SPOT_LIGHT) {
+        // inputs: Location, Rotation, Energy, Size
         vector direction = normalize(Location - P);
         vector incomming = transform(mat, direction);
 
@@ -59,6 +62,7 @@ shader light(
             RayLength = distance(Location, P);
         }
     } else if (Type == AREA_LIGHT) {
+        // inputs: Location, Rotation, Energy, Distance, Width, Height
         vector z_axis = vector(mat[0][2], mat[1][2], mat[2][2]);
         vector incomming = transform(mat, Location - P);
 
