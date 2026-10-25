@@ -51,17 +51,46 @@ class ToonNodeInput(ToonNode):
         node_tree.outputs.new("NodeSocketVector", "UV")
 
         input = node_tree.nodes.new("NodeGroupInput")
-        light = node_tree.nodes.new("ToonNodeLight")
 
-        material = node_tree.nodes.new("ToonNodeMaterial")
-        node_tree.links.new(input.outputs[0], material.inputs[2])
-        node_tree.links.new(input.outputs[1], material.inputs[3])
-        node_tree.links.new(input.outputs[2], material.inputs[4])
-        node_tree.links.new(light.outputs[0], material.inputs[0])
-        node_tree.links.new(light.outputs[1], material.inputs[1])
-        node_tree.links.new(light.outputs[2], material.inputs[5])
-        node_tree.links.new(light.outputs[3], material.inputs[6])
-        node_tree.links.new(light.outputs[4], material.inputs[7])
+        node_ready = True
+        first_uv = None
+        last_diffuse = None
+        last_specular = None
+
+        for i in range(4):
+            light = node_tree.nodes.new("ToonNodeLight")
+            light.light_index = i
+            material = node_tree.nodes.new("ToonNodeMaterial")
+            node_tree.links.new(light.outputs[0], material.inputs[0])
+            node_tree.links.new(light.outputs[1], material.inputs[1])
+            node_tree.links.new(input.outputs[0], material.inputs[2])
+            node_tree.links.new(input.outputs[1], material.inputs[3])
+            node_tree.links.new(input.outputs[2], material.inputs[4])
+            node_tree.links.new(light.outputs[2], material.inputs[5])
+            node_tree.links.new(light.outputs[3], material.inputs[6])
+            node_tree.links.new(light.outputs[4], material.inputs[7])
+
+            node_ready &= light.node_ready and material.node_ready
+
+            if i == 0:
+                first_uv = light.outputs[5]
+                last_diffuse = material.outputs[0]
+                last_specular = material.outputs[1]
+            else:
+                mix_diffuse = node_tree.nodes.new("ShaderNodeMixRGB")
+                mix_diffuse.blend_type = "ADD"
+                mix_diffuse.inputs[0].default_value = 1.0
+                node_tree.links.new(material.outputs[0], mix_diffuse.inputs[1])
+                node_tree.links.new(last_diffuse, mix_diffuse.inputs[2])
+
+                mix_specular = node_tree.nodes.new("ShaderNodeMixRGB")
+                mix_specular.blend_type = "ADD"
+                mix_specular.inputs[0].default_value = 1.0
+                node_tree.links.new(material.outputs[1], mix_specular.inputs[1])
+                node_tree.links.new(last_specular, mix_specular.inputs[2])
+
+                last_diffuse = mix_diffuse.outputs[0]
+                last_specular = mix_specular.outputs[0]
 
         preview_diffuse = node_tree.nodes.new("ShaderNodeBsdfDiffuse")
         preview_diffuse.inputs[0].default_value = (1.0, 1.0, 1.0, 1.0)
@@ -80,14 +109,14 @@ class ToonNodeInput(ToonNode):
         is_osl = node_tree.nodes.new("ToonNodeIsOSL")
         node_tree.links.new(is_osl.outputs[0], mix.inputs[0])
         node_tree.links.new(binalize.outputs[0], mix.inputs[1])
-        node_tree.links.new(material.outputs[0], mix.inputs[2])
+        node_tree.links.new(last_diffuse, mix.inputs[2])
 
         output = node_tree.nodes.new("NodeGroupOutput")
         node_tree.links.new(mix.outputs[0], output.inputs[0])
-        node_tree.links.new(material.outputs[1], output.inputs[1])
-        node_tree.links.new(light.outputs[5], output.inputs[2])
+        node_tree.links.new(last_specular, output.inputs[1])
+        node_tree.links.new(first_uv, output.inputs[2])
 
-        return node_tree, light.node_ready and material.node_ready
+        return node_tree, node_ready
 
     @override
     def draw_buttons(self, context: Context, layout: UILayout):
