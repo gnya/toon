@@ -2,6 +2,7 @@ from .node import (
     ToonNodeLightSettings,
     ToonNodeMaterialSettings,
     ToonNodeObjectSettings,
+    ToonNodeSceneLight,
 )
 from .palette import (
     ToonPaletteProperty,
@@ -18,6 +19,7 @@ classes = (
     ToonNodeLightSettings,
     ToonNodeMaterialSettings,
     ToonNodeObjectSettings,
+    ToonNodeSceneLight,
     ToonPaletteProperty,
     ToonPaletteSearchGroup,
     ToonPaletteSearchPalette,

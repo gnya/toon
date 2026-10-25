@@ -2,8 +2,15 @@ from __future__ import annotations
 
 import math
 
-from bpy.props import EnumProperty, FloatProperty, IntProperty, PointerProperty
-from bpy.types import Light, Material, Object, PropertyGroup
+from bpy.props import (
+    EnumProperty,
+    FloatProperty,
+    FloatVectorProperty,
+    IntProperty,
+    PointerProperty,
+)
+from bpy.types import Light, Material, Object, PropertyGroup, Scene
+from mathutils import Euler, Vector
 
 
 class ToonNodeIDProperties(PropertyGroup):
@@ -112,23 +119,43 @@ class ToonNodeLightSettings(PropertyGroup):
         self.id_data.energy = value
 
     energy: FloatProperty(
-        name="Energy", soft_min=0.0, soft_max=10.0, get=_get_energy, set=_set_energy
+        name="Energy",
+        soft_min=0.0,
+        soft_max=10.0,
+        get=_get_energy,
+        set=_set_energy,
     )
 
     distance: FloatProperty(
-        name="Distance", default=1.0, min=0.0, max=float("inf"), subtype="DISTANCE"
-    )
-
-    width: FloatProperty(
-        name="Width", default=1.0, min=0.0, max=float("inf"), subtype="DISTANCE"
-    )
-
-    height: FloatProperty(
-        name="Height", default=1.0, min=0.0, max=float("inf"), subtype="DISTANCE"
+        name="Distance",
+        default=1.0,
+        min=0.0,
+        max=float("inf"),
+        subtype="DISTANCE",
     )
 
     size: FloatProperty(
-        name="Size", default=math.pi / 4.0, min=0.0, max=math.pi, subtype="ANGLE"
+        name="Size",
+        default=math.pi / 4.0,
+        min=0.0,
+        max=math.pi,
+        subtype="ANGLE",
+    )
+
+    width: FloatProperty(
+        name="Width",
+        default=1.0,
+        min=0.0,
+        max=float("inf"),
+        subtype="DISTANCE",
+    )
+
+    height: FloatProperty(
+        name="Height",
+        default=1.0,
+        min=0.0,
+        max=float("inf"),
+        subtype="DISTANCE",
     )
 
     @staticmethod
@@ -146,3 +173,92 @@ class ToonNodeLightSettings(PropertyGroup):
     @staticmethod
     def unregister():
         delattr(Light, ToonNodeLightSettings.PROP_NAME)
+
+
+class ToonNodeSceneLight(PropertyGroup):
+    PROP_NAME = "toon_node_scene_light"
+
+    def _poll_light(self, obj: Object) -> bool:
+        return obj.type in {"LIGHT"}
+
+    light: PointerProperty(type=Object, poll=_poll_light)
+
+    def _get_light_type(self) -> int:
+        if self.light is None or self.light.data is None:
+            return -1
+        else:
+            return ["POINT", "SUN", "SPOT", "AREA"].index(self.light.data.type)
+
+    def _get_location(self) -> Vector:
+        if self.light is None:
+            return Vector((0.0, 0.0, 0.0))
+        else:
+            return self.light.matrix_world.translation
+
+    def _get_rotation(self) -> Euler:
+        if self.light is None:
+            return Euler((0.0, 0.0, 0.0))
+        else:
+            return self.light.matrix_world.to_euler()
+
+    def _get_energy(self) -> float:
+        if self.light is None:
+            return 1.0
+        else:
+            return ToonNodeLightSettings.instance(self.light.data).energy
+
+    def _get_distance(self) -> float:
+        if self.light is None:
+            return 1.0
+        else:
+            return ToonNodeLightSettings.instance(self.light.data).distance
+
+    def _get_size(self) -> float:
+        if self.light is None:
+            return math.pi / 4.0
+        else:
+            return ToonNodeLightSettings.instance(self.light.data).size
+
+    def _get_width(self) -> float:
+        if self.light is None:
+            return 1.0
+        else:
+            return ToonNodeLightSettings.instance(self.light.data).width
+
+    def _get_height(self) -> float:
+        if self.light is None:
+            return 1.0
+        else:
+            return ToonNodeLightSettings.instance(self.light.data).height
+
+    light_type: IntProperty(get=_get_light_type)
+
+    location: FloatVectorProperty(get=_get_location)
+
+    rotation: FloatVectorProperty(get=_get_rotation)
+
+    energy: FloatProperty(get=_get_energy)
+
+    distance: FloatProperty(get=_get_distance)
+
+    size: FloatProperty(get=_get_size)
+
+    width: FloatProperty(get=_get_width)
+
+    height: FloatProperty(get=_get_height)
+
+    @staticmethod
+    def instance(id: Scene) -> ToonNodeLightSettings:
+        return getattr(id, ToonNodeSceneLight.PROP_NAME)
+
+    @staticmethod
+    def register():
+        setattr(
+            Scene,
+            ToonNodeSceneLight.PROP_NAME,
+            PointerProperty(type=ToonNodeSceneLight),
+        )
+
+    @staticmethod
+    def unregister():
+        delattr(Scene, ToonNodeSceneLight.PROP_NAME)

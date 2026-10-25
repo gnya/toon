@@ -1,5 +1,4 @@
 from .handlers import (
-    light_type_update_post,
     node_group_import_post,
     node_group_update_post,
 )
@@ -35,7 +34,6 @@ __all__ = [
     unique_name,
     timeit,
     time_start,
-    light_type_update_post,
     node_group_update_post,
     node_group_import_post,
     NodeLinkRebinder,

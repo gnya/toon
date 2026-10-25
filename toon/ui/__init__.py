@@ -4,6 +4,7 @@ from .node_panel import (
     DATA_PT_toon_node_light_eevee,
     MATERIAL_PT_toon_node,
     OBJECT_PT_toon_node,
+    SCENE_PT_toon_node_light,
     VIEW3D_PT_toon_node,
 )
 from .palette_list import VIEW3D_UL_toon_palette_entry
@@ -26,6 +27,7 @@ classes = (
     DATA_PT_toon_node_light_eevee,
     MATERIAL_PT_toon_node,
     OBJECT_PT_toon_node,
+    SCENE_PT_toon_node_light,
     VIEW3D_UL_toon_palette_entry,
     VIEW3D_MT_toon_palette,
     VIEW3D_MT_toon_palette_add,

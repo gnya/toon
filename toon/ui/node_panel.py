@@ -13,6 +13,7 @@ from toon.props import (
     ToonNodeLightSettings,
     ToonNodeMaterialSettings,
     ToonNodeObjectSettings,
+    ToonNodeSceneLight,
 )
 from toon.utils import override
 
@@ -207,3 +208,22 @@ class VIEW3D_PT_toon_node(Panel):
             text="Compile All Shaders",
             icon="FILE_CACHE",
         )
+
+
+class SCENE_PT_toon_node_light(Panel):
+    bl_idname = "SCENE_PT_toon_node_light"
+    bl_label = "Toon"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "scene"
+
+    @override
+    def draw(self, context: Context):
+        layout = self.layout
+
+        light = ToonNodeSceneLight.instance(context.scene)
+
+        col = layout.column()
+        col.use_property_split = True
+
+        col.prop(light, "light", text="Light")
