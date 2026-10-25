@@ -16,6 +16,14 @@ class ToonNodeMaterial(ToonNodeOSL):
     bl_label = "Material"
     osl_name = "material"
 
+    def _new_attribute_node(self, node_tree: NodeTree, name: str) -> Node:
+        node = node_tree.nodes.new("ShaderNodeAttribute")
+
+        node.attribute_type = "OBJECT"
+        node.attribute_name = f"{ToonNodeObjectSettings.PROP_NAME}.{name}"
+
+        return node
+
     @override
     def init_sockets(self, node_tree: NodeTree):
         i = node_tree.inputs.new("NodeSocketVector", "Light")
@@ -74,11 +82,9 @@ class ToonNodeMaterial(ToonNodeOSL):
         node_tree.links.new(input.outputs[6], script.inputs[7])
         node_tree.links.new(input.outputs[7], script.inputs[8])
 
-        offset = node_tree.nodes.new("ShaderNodeAttribute")
-        offset.attribute_name = (
-            f"{ToonNodeObjectSettings.PROP_NAME}.shadow_terminator_geometry_offset"
+        offset = self._new_attribute_node(
+            node_tree, "shadow_terminator_geometry_offset"
         )
-        offset.attribute_type = "OBJECT"
         node_tree.links.new(offset.outputs[2], script.inputs[3])
 
         output = node_tree.nodes.new("NodeGroupOutput")

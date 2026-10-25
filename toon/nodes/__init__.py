@@ -1,5 +1,6 @@
 from .hsv_jitter import ToonNodeHSVJitter
 from .input import ToonNodeInput
+from .is_osl import ToonNodeIsOSL
 from .lambert import ToonNodeLambert
 from .light import ToonNodeLight
 from .matcap import ToonNodeMatCap
@@ -18,6 +19,7 @@ classes = (
     ToonNodeUVPixelSnap,
     ToonNodeTransform,
     ToonNodeInput,
+    ToonNodeIsOSL,
     ToonNodeLambert,
     ToonNodeMaterial,
     ToonNodeLight,

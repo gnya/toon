@@ -230,3 +230,4 @@ class SCENE_PT_toon_node_light(Panel):
         col.use_property_split = True
 
         col.prop(light, "light", text="Light")
+        col.prop(light, "preview_threshold", text="Preview Diffuse Threshold")

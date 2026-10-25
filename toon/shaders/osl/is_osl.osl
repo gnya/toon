@@ -1,0 +1,13 @@
+/*
+ * toon shader
+ * author: gnya
+ */
+
+shader is_osl(
+    /*
+     * This is a hack necessary to determine whether the currently
+     * used renderer can use OSL and perform fallback processing.
+     */
+    output int IsOSL = 1
+    [[ string widget = "boolean" ]]
+) {}

@@ -289,6 +289,14 @@ class ToonNodeSceneLight(PropertyGroup):
 
     height: FloatProperty(get=_get_height)
 
+    preview_threshold: FloatProperty(
+        name="Preview Diffuse Threshold",
+        default=0.1,
+        min=0.0,
+        max=1.0,
+        subtype="FACTOR",
+    )
+
     @staticmethod
     def instance(id: Scene) -> ToonNodeLightSettings:
         return getattr(id, ToonNodeSceneLight.PROP_NAME)
