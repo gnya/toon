@@ -28,6 +28,7 @@ class ToonNodeLight(ToonNodeOSL):
     def init_sockets(self, node_tree: NodeTree):
         node_tree.outputs.new("NodeSocketVector", "Light")
         node_tree.outputs.new("NodeSocketFloat", "Ray Length")
+        node_tree.outputs.new("NodeSocketColor", "Color")
         node_tree.outputs.new("NodeSocketVector", "UV")
 
     @override
@@ -50,6 +51,8 @@ class ToonNodeLight(ToonNodeOSL):
         node_tree.links.new(height.outputs[2], script.inputs[7])
 
         output = node_tree.nodes.new("NodeGroupOutput")
+        color = self._new_attribute_node(node_tree, "color")
         node_tree.links.new(script.outputs[0], output.inputs[0])
         node_tree.links.new(script.outputs[1], output.inputs[1])
-        node_tree.links.new(script.outputs[2], output.inputs[2])
+        node_tree.links.new(color.outputs[0], output.inputs[2])
+        node_tree.links.new(script.outputs[2], output.inputs[3])

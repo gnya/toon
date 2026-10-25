@@ -10,7 +10,7 @@ from bpy.props import (
     PointerProperty,
 )
 from bpy.types import Light, Material, Object, PropertyGroup, Scene
-from mathutils import Euler, Vector
+from mathutils import Color, Euler, Vector
 
 
 class ToonNodeIDProperties(PropertyGroup):
@@ -112,18 +112,20 @@ class ToonNodeObjectSettings(ToonNodeIDProperties):
 class ToonNodeLightSettings(PropertyGroup):
     PROP_NAME = "toon_node_light_settings"
 
+    def _get_color(self) -> Color:
+        return self.id_data.color
+
     def _get_energy(self) -> float:
         return self.id_data.energy
 
-    def _set_energy(self, value: float):
-        self.id_data.energy = value
+    color: FloatVectorProperty(
+        name="Color",
+        get=_get_color,
+    )
 
     energy: FloatProperty(
         name="Energy",
-        soft_min=0.0,
-        soft_max=10.0,
         get=_get_energy,
-        set=_set_energy,
     )
 
     distance: FloatProperty(
@@ -201,6 +203,12 @@ class ToonNodeSceneLight(PropertyGroup):
         else:
             return self.light.matrix_world.to_euler()
 
+    def _get_color(self) -> Color:
+        if self.light is None:
+            return Color((0.0, 0.0, 0.0))
+        else:
+            return ToonNodeLightSettings.instance(self.light.data).color
+
     def _get_energy(self) -> float:
         if self.light is None:
             return 1.0
@@ -236,6 +244,8 @@ class ToonNodeSceneLight(PropertyGroup):
     location: FloatVectorProperty(get=_get_location)
 
     rotation: FloatVectorProperty(get=_get_rotation)
+
+    color: FloatVectorProperty(get=_get_color)
 
     energy: FloatProperty(get=_get_energy)
 

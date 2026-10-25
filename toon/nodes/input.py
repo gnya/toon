@@ -54,7 +54,7 @@ class ToonNodeInput(ToonNode):
         output = node_tree.nodes.new("NodeGroupOutput")
         node_tree.links.new(material.outputs[0], output.inputs[0])
         node_tree.links.new(material.outputs[1], output.inputs[1])
-        node_tree.links.new(light.outputs[2], output.inputs[2])
+        node_tree.links.new(light.outputs[3], output.inputs[2])
 
         return node_tree, light.node_ready and material.node_ready
 
