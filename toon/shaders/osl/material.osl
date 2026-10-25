@@ -82,30 +82,33 @@ shader material(
     float Reflectance = 0.5,
     float Exponent = 10.0,
 
-    /*
-     * This is a hack necessary to determine whether the currently
-     * used renderer can use OSL and perform fallback processing.
-     */
-    output int IsCycles = 1
-    [[ string widget = "boolean" ]],
+    color Color = color(0.0),
+    float DiffuseThreshold = 0.1,
+    float SpecularThreshold = 0.1,
 
-    output float Diffuse = 0.0,
-    output float Specular = 0.0
+    output color Diffuse = color(0.0),
+    output color Specular = color(0.0)
 ) {
-    Diffuse = clamp(dot(Light, Normal), 0.0, 1.0);
+    float diffuse_value = max(0.0, dot(Light, Normal));
+    float specular_value = 0.0;
 
     if (Reflectance > 0.0) {
         vector R = reflect(normalize(Light), Normal);
-        
-        Specular = pow(max(0.0, dot(-I, R)), Exponent) * Reflectance;
+        specular_value = pow(max(0.0, dot(-I, R)), Exponent) * Reflectance;
     }
 
-    if (Diffuse > 0.0) {
-        vector L = normalize(Light);
-
-        if (shadow(L, RayLength, Cutoff, TRACE_EPS)) {
-            Diffuse = 0.0;
-            Specular = 0.0;
+    if (diffuse_value > 0.0) {
+        if (shadow(normalize(Light), RayLength, Cutoff, TRACE_EPS)) {
+            diffuse_value = 0.0;
+            specular_value = 0.0;
         }
+    }
+
+    if (diffuse_value >= DiffuseThreshold) {
+        Diffuse = Color;
+    }
+
+    if (specular_value >= SpecularThreshold) {
+        Specular = Color;
     }
 }

@@ -37,8 +37,8 @@ class ToonNodeInput(ToonNode):
         i.min_value = 0.0
         i.max_value = float("inf")
 
-        node_tree.outputs.new("NodeSocketFloat", "Diffuse")
-        node_tree.outputs.new("NodeSocketFloat", "Specular")
+        node_tree.outputs.new("NodeSocketColor", "Diffuse")
+        node_tree.outputs.new("NodeSocketColor", "Specular")
         node_tree.outputs.new("NodeSocketVector", "UV")
 
         input = node_tree.nodes.new("NodeGroupInput")
@@ -50,11 +50,14 @@ class ToonNodeInput(ToonNode):
         node_tree.links.new(input.outputs[2], material.inputs[4])
         node_tree.links.new(light.outputs[0], material.inputs[0])
         node_tree.links.new(light.outputs[1], material.inputs[1])
+        node_tree.links.new(light.outputs[2], material.inputs[5])
+        node_tree.links.new(light.outputs[3], material.inputs[6])
+        node_tree.links.new(light.outputs[4], material.inputs[7])
 
         output = node_tree.nodes.new("NodeGroupOutput")
         node_tree.links.new(material.outputs[0], output.inputs[0])
         node_tree.links.new(material.outputs[1], output.inputs[1])
-        node_tree.links.new(light.outputs[3], output.inputs[2])
+        node_tree.links.new(light.outputs[5], output.inputs[2])
 
         return node_tree, light.node_ready and material.node_ready
 

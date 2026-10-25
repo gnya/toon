@@ -46,8 +46,21 @@ class ToonNodeMaterial(ToonNodeOSL):
         i.min_value = 0.0
         i.max_value = float("inf")
 
-        node_tree.outputs.new("NodeSocketFloat", "Diffuse")
-        node_tree.outputs.new("NodeSocketFloat", "Specular")
+        i = node_tree.inputs.new("NodeSocketColor", "Color")
+        i.default_value = (0.0, 0.0, 0.0, 0.0)
+
+        i = node_tree.inputs.new("NodeSocketFloat", "Diffuse Threshold")
+        i.default_value = 0.1
+        i.min_value = 0.0
+        i.max_value = 1.0
+
+        i = node_tree.inputs.new("NodeSocketFloat", "Specular Threshold")
+        i.default_value = 0.1
+        i.min_value = 0.0
+        i.max_value = 1.0
+
+        node_tree.outputs.new("NodeSocketColor", "Diffuse")
+        node_tree.outputs.new("NodeSocketColor", "Specular")
 
     @override
     def init_node_tree(self, node_tree: NodeTree, script: Node):
@@ -57,27 +70,17 @@ class ToonNodeMaterial(ToonNodeOSL):
         node_tree.links.new(input.outputs[2], script.inputs[2])
         node_tree.links.new(input.outputs[3], script.inputs[4])
         node_tree.links.new(input.outputs[4], script.inputs[5])
+        node_tree.links.new(input.outputs[5], script.inputs[6])
+        node_tree.links.new(input.outputs[6], script.inputs[7])
+        node_tree.links.new(input.outputs[7], script.inputs[8])
 
-        attr = node_tree.nodes.new("ShaderNodeAttribute")
-        attr.attribute_name = (
+        offset = node_tree.nodes.new("ShaderNodeAttribute")
+        offset.attribute_name = (
             f"{ToonNodeObjectSettings.PROP_NAME}.shadow_terminator_geometry_offset"
         )
-        attr.attribute_type = "OBJECT"
-        node_tree.links.new(attr.outputs[2], script.inputs[3])
-
-        preview_mat = node_tree.nodes.new("ShaderNodeBsdfDiffuse")
-        preview_mat.inputs[0].default_value = (1.0, 1.0, 1.0, 1.0)
-        node_tree.links.new(input.outputs[2], preview_mat.inputs[2])
-
-        shader_to_rgb = node_tree.nodes.new("ShaderNodeShaderToRGB")
-        node_tree.links.new(preview_mat.outputs[0], shader_to_rgb.inputs[0])
-
-        mix = node_tree.nodes.new("ShaderNodeMix")
-        mix.clamp_factor = True
-        node_tree.links.new(script.outputs[0], mix.inputs[0])
-        node_tree.links.new(shader_to_rgb.outputs[0], mix.inputs[2])
-        node_tree.links.new(script.outputs[1], mix.inputs[3])
+        offset.attribute_type = "OBJECT"
+        node_tree.links.new(offset.outputs[2], script.inputs[3])
 
         output = node_tree.nodes.new("NodeGroupOutput")
-        node_tree.links.new(script.outputs[2], output.inputs[1])
-        node_tree.links.new(mix.outputs[0], output.inputs[0])
+        node_tree.links.new(script.outputs[0], output.inputs[0])
+        node_tree.links.new(script.outputs[1], output.inputs[1])

@@ -123,7 +123,7 @@ def _poll_toon_node_light(cls: type[Panel], context: Context) -> bool:
     if context.object is None:
         return False
 
-    return getattr(context.object.data, "type", "") in {"POINT", "SPOT", "AREA"}
+    return getattr(context.object.data, "type", "") in {"POINT", "SUN", "SPOT", "AREA"}
 
 
 def _draw_toon_node_light(self: Panel, context: Context):
@@ -137,6 +137,9 @@ def _draw_toon_node_light(self: Panel, context: Context):
 
     col = layout.column()
     col.use_property_split = True
+
+    col.prop(settings, "diffuse_threshold", text="Diffuse Threshold")
+    col.prop(settings, "specular_threshold", text="Specular Threshold")
 
     if type == "POINT":
         col.prop(settings, "distance", text="Distance")

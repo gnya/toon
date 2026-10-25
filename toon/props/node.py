@@ -128,6 +128,22 @@ class ToonNodeLightSettings(PropertyGroup):
         get=_get_energy,
     )
 
+    diffuse_threshold: FloatProperty(
+        name="Diffuse Threshold",
+        default=0.1,
+        min=0.0,
+        max=1.0,
+        subtype="FACTOR",
+    )
+
+    specular_threshold: FloatProperty(
+        name="Specular Threshold",
+        default=0.1,
+        min=0.0,
+        max=1.0,
+        subtype="FACTOR",
+    )
+
     distance: FloatProperty(
         name="Distance",
         default=1.0,
@@ -215,6 +231,18 @@ class ToonNodeSceneLight(PropertyGroup):
         else:
             return ToonNodeLightSettings.instance(self.light.data).energy
 
+    def _get_diffuse_threshold(self) -> float:
+        if self.light is None:
+            return 0.1
+        else:
+            return ToonNodeLightSettings.instance(self.light.data).diffuse_threshold
+
+    def _get_specular_threshold(self) -> float:
+        if self.light is None:
+            return 0.1
+        else:
+            return ToonNodeLightSettings.instance(self.light.data).specular_threshold
+
     def _get_distance(self) -> float:
         if self.light is None:
             return 1.0
@@ -248,6 +276,10 @@ class ToonNodeSceneLight(PropertyGroup):
     color: FloatVectorProperty(get=_get_color)
 
     energy: FloatProperty(get=_get_energy)
+
+    diffuse_threshold: FloatProperty(get=_get_diffuse_threshold)
+
+    specular_threshold: FloatProperty(get=_get_specular_threshold)
 
     distance: FloatProperty(get=_get_distance)
 
