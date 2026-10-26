@@ -229,8 +229,8 @@ class SCENE_PT_toon_node_light(Panel):
         col = layout.column()
         col.use_property_split = True
 
-        col.prop(settings.light_0, "light", text="Light 0")
-        col.prop(settings.light_1, "light", text="Light 1")
-        col.prop(settings.light_2, "light", text="Light 2")
-        col.prop(settings.light_3, "light", text="Light 3")
+        for i in range(ToonNodeSceneSettings.N_LIGHT):
+            col.prop(getattr(settings, f"light_{i}"), "light", text=f"Light {i}")
+
+        col.separator()
         col.prop(settings, "preview_threshold", text="Preview Diffuse Threshold")

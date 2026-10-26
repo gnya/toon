@@ -290,14 +290,7 @@ class ToonNodeSceneLight(PropertyGroup):
 
 class ToonNodeSceneSettings(PropertyGroup):
     PROP_NAME = "toon_node_scene_settings"
-
-    light_0: PointerProperty(type=ToonNodeSceneLight)
-
-    light_1: PointerProperty(type=ToonNodeSceneLight)
-
-    light_2: PointerProperty(type=ToonNodeSceneLight)
-
-    light_3: PointerProperty(type=ToonNodeSceneLight)
+    N_LIGHT = 4
 
     preview_threshold: FloatProperty(
         name="Preview Diffuse Threshold",
@@ -313,6 +306,13 @@ class ToonNodeSceneSettings(PropertyGroup):
 
     @staticmethod
     def register():
+        for i in range(ToonNodeSceneSettings.N_LIGHT):
+            setattr(
+                ToonNodeSceneSettings,
+                f"light_{i}",
+                PointerProperty(type=ToonNodeSceneLight),
+            )
+
         setattr(
             Scene,
             ToonNodeSceneSettings.PROP_NAME,
@@ -321,4 +321,7 @@ class ToonNodeSceneSettings(PropertyGroup):
 
     @staticmethod
     def unregister():
+        for i in range(ToonNodeSceneSettings.N_LIGHT):
+            delattr(ToonNodeSceneSettings, f"light_{i}")
+
         delattr(Scene, ToonNodeSceneSettings.PROP_NAME)

@@ -57,7 +57,7 @@ class ToonNodeInput(ToonNode):
         last_diffuse = None
         last_specular = None
 
-        for i in range(4):
+        for i in range(ToonNodeSceneSettings.N_LIGHT):
             light = node_tree.nodes.new("ToonNodeLight")
             light.light_index = i
             material = node_tree.nodes.new("ToonNodeMaterial")
