@@ -66,7 +66,7 @@ class ToonNodeIDProperties(PropertyGroup):
 
 
 class ToonNodeMaterialSettings(ToonNodeIDProperties):
-    PROP_NAME = "toon_node_material_settings"
+    PROP_NAME = "toon_node"
 
     @staticmethod
     def instance(id: Material) -> ToonNodeMaterialSettings:
@@ -86,7 +86,7 @@ class ToonNodeMaterialSettings(ToonNodeIDProperties):
 
 
 class ToonNodeObjectSettings(ToonNodeIDProperties):
-    PROP_NAME = "toon_node_object_settings"
+    PROP_NAME = "toon_node"
 
     shadow_terminator_geometry_offset: FloatProperty(
         name="Geometry Offset", default=0.1, min=0.0, max=1.0
@@ -110,7 +110,7 @@ class ToonNodeObjectSettings(ToonNodeIDProperties):
 
 
 class ToonNodeLightSettings(PropertyGroup):
-    PROP_NAME = "toon_node_light_settings"
+    PROP_NAME = "toon_node"
 
     def _get_color(self) -> Color:
         return self.id_data.color
@@ -289,7 +289,7 @@ class ToonNodeSceneLight(PropertyGroup):
 
 
 class ToonNodeSceneSettings(PropertyGroup):
-    PROP_NAME = "toon_node_scene_settings"
+    PROP_NAME = "toon_node"
     N_LIGHT = 4
 
     preview_threshold: FloatProperty(
